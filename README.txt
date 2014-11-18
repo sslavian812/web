@@ -47,3 +47,19 @@ sudo paster serve --reload development.ini
 таски придумаю
 
 
+========================
+
+http://codepen.io/iraycd/pen/dHrxv - для дизайна
+
+http://www.stavros.io/tutorials/python/ - по питону
+
+http://docs.sqlalchemy.org/en/latest/index.html - алхимия
+
+http://www.makotemplates.org/ - мако (шаблоны)
+
+https://tech.yandex.ru/translate/doc/dg/reference/translate-docpage/ - переводчик
+
+http://docs.pylonsproject.org/projects/pylons-webframework/en/latest/ - pylons
+
+
+
