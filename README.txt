@@ -61,5 +61,7 @@ https://tech.yandex.ru/translate/doc/dg/reference/translate-docpage/ - пере�
 
 http://docs.pylonsproject.org/projects/pylons-webframework/en/latest/ - pylons
 
+http://dbdsgnr.appspot.com/ - проектировалка БД
+
 
 
