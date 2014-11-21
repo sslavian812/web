@@ -63,5 +63,13 @@ class DBAdaptor:
             password=password
         ).first()
 
+    def get_lists(self, owner_id):
+        session = self.create_session()
+        return session.query(List).filter(owner_id=owner_id).all()
+
+    def get_words(self, list_id):
+        session = self.create_session()
+        return session.query(Word).filter(list_id=list_id).all()
+
 
 adaptor = DBAdaptor()
