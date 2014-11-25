@@ -8,6 +8,7 @@ __see__ = """
         http://api.yandex.com/translate/doc/dg/reference/translate.xml
 """
 
+
 class Translation:
     meanings = []
     synonyms = []
@@ -74,7 +75,7 @@ class Translator:
         pass
 
     @staticmethod
-    def get_translation_direction(text):
+    def __get_translation_direction(text):
         for c in text:
             if 'A' <= c <= 'Z' or 'a' <= c <= 'z':
                 return translation_direction_en_ru
@@ -83,8 +84,8 @@ class Translator:
         return translation_direction_default
 
     @staticmethod
-    def get_dict_article(word):
-        url = url_dict.format(dict_api_key, Translator.get_translation_direction(word), urllib.quote(word))
+    def __get_dict_article(word):
+        url = url_dict.format(dict_api_key, Translator.__get_translation_direction(word), urllib.quote(word))
         try:
             response = requests.get(url).json()
         except (requests.ConnectionError, ValueError):
@@ -101,11 +102,16 @@ class Translator:
                 translations.append(t)
             entry = DictionaryEntry(d['text'], d['tr'], d['pos'], translations)
             entries.append(entry)
-        return DictionaryArticle(word, entries[0].translations[0].text, entries[0].transcription, entries)
+        if len(entries) == 0:
+            return None
+        result = DictionaryArticle(word, entries[0].translations[0].text, entries[0].transcription, entries)
+        if result.original == result.main_translation:
+            return None
+        return result
 
     @staticmethod
-    def get_trnsl_article(word):
-        url = url_trnsl.format(trnsl_api_key, Translator.get_translation_direction(word), urllib.quote(word))
+    def __get_trnsl_article(word):
+        url = url_trnsl.format(trnsl_api_key, Translator.__get_translation_direction(word), urllib.quote(word))
         try:
             response = requests.get(url).json()
         except (requests.ConnectionError, ValueError):
@@ -114,12 +120,21 @@ class Translator:
             return Article(word,
                            functools.reduce(lambda acc, c: (acc + "\n" if len(acc) > 0 else "") + c,
                                             response['text'], ""))
+        return None
+
+    @staticmethod
+    def get_any_article(word):
+        result = Translator.__get_dict_article(word)
+        if result is None or len(result.entries) == 0:
+            result = Translator.__get_trnsl_article(word)
+        return result
 
 
 def test():
-    result = Translator.get_dict_article("time")
+    result = Translator.get_any_article("time")
     assert result.main_translation == u"время"
-    result = Translator.get_trnsl_article("You've got time")
+    result = Translator.get_any_article("You've got time")
     assert result.main_translation == u'У вас есть время'
+
 
 test()
