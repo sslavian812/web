@@ -1,5 +1,5 @@
 <%inherit file="common_page.mako">
 
-    ## TODO add a signup page content
+    ## TODO add a homepage content
 
 </%inherit>

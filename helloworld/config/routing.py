@@ -6,6 +6,7 @@ refer to the routes manual at http://routes.groovie.org/docs/
 """
 from routes import Mapper
 
+
 def make_map(config):
     """Create, configure and return the routes Mapper"""
     map = Mapper(directory=config['pylons.paths']['controllers'],
@@ -20,9 +21,11 @@ def make_map(config):
 
     # CUSTOM ROUTES HERE
 
+    map.connect('/index', controller='index')
     map.connect('/{controller}/{action}')
-    #map.connect('/{controller}/{action}/{id}')
+    # map.connect('/{controller}/{action}/{id}')
 
     map.connect('/translate', controller='translate')
+    map.connect('/home', controller='index')
 
     return map
