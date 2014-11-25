@@ -13,14 +13,14 @@ li {
 <div class="header">
 
     <ul>
-        <li><a href="home">Home</a></li>
-        <li><a href="personal">My words</a></li>
-        <li><a href="translate">Translate</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/personal">My words</a></li>
+        <li><a href="/translate">Translate</a></li>
         %if not signed_in:
-            <li><a href="sign_in">Sign in</a></li>
-            <li><a href="sign_up">Sign up</a></li>
+            <li><a href="/sign_in">Sign in</a></li>
+            <li><a href="/sign_up">Sign up</a></li>
         %else:
-            <li><a href="sign_out">Sign out</a></li>
+            <li><a href="/sign_out">Sign out</a></li>
         %endif
     </ul>
 </div>
