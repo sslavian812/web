@@ -27,6 +27,7 @@ Then you are ready to go.
 pip install pylons
 pip install SQLAlchemy
 pip install paster
+pip install requests
 
 (остальное по мере необходимости, я уже не помню что еще надо)
 
