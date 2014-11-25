@@ -137,4 +137,4 @@ def test():
     assert result.main_translation == u'У вас есть время'
 
 
-test()
+# test()

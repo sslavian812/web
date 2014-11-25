@@ -21,11 +21,17 @@ def make_map(config):
 
     # CUSTOM ROUTES HERE
 
-    map.connect('/index', controller='index')
-    map.connect('/{controller}/{action}')
     # map.connect('/{controller}/{action}/{id}')
 
     map.connect('/translate', controller='translate')
+    map.connect('/translate/', controller='translate')
+    map.connect('/translate/{word}', controller='translate')
+
     map.connect('/home', controller='index')
+    map.connect('/index', controller='index')
+    map.connect('', controller='index')
+    map.connect('/', controller='index')
+
+    map.connect('/{controller}/{action}')
 
     return map

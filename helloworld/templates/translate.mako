@@ -1,6 +1,8 @@
 <%inherit file="common_page.mako">
-    здесь должны быть фома чтобы отправить слово и менюка чтобы выбрать направления перевода. <br>
-    и вообще как у гугла все. <br>
-    <br>
-    <img src="/tr.png" height="900" width="1600">
+    <%
+        if word is not None:
+            from helloworld.lib.translator import Translator
+            result = Translator.get_any_article(word)
+    %>
+${(result.original + " - " + result.main_translation) if word is not None else "translate something"}
 </%inherit>
