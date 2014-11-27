@@ -21,6 +21,6 @@ class TranslateController(BaseController):
             parts = str(query).split('&')
             for p in parts:
                 if p.split('=')[0] == 'text':
-                    word = urllib.unquote(p.split('=')[1])
+                    word = urllib.unquote(p.split('=')[1]).replace('+', ' ')
                     break
         return render('/translate.mako', {'word': word})

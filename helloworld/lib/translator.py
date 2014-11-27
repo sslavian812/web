@@ -47,7 +47,6 @@ class Article:
 
 
 class DictionaryArticle(Article):
-    translations = []
     transcription = ""
     entries = []
 
@@ -96,11 +95,11 @@ class Translator:
             for tr in (d['tr'] if 'tr' in d else []):
                 t = Translation(map(lambda x: x['text'], tr['syn'] if 'syn' in tr else []),
                                 map(lambda x: x['text'], tr['mean'] if 'mean' in tr else []),
-                                map(lambda x: (x['text'], x['tr']), tr['ex'] if 'ex' in tr else []),
+                                map(lambda x: (x['text'], x['tr'][0]['text']), tr['ex'] if 'ex' in tr else []),
                                 tr['pos'] if 'pos' in tr else None,
                                 tr['text'] if 'text' in tr else None)
                 translations.append(t)
-            entry = DictionaryEntry(d['text'], d['tr'], d['pos'], translations)
+            entry = DictionaryEntry(d['text'], d['ts'] if 'ts' in d else '', d['pos'], translations)
             entries.append(entry)
         if len(entries) == 0:
             return None
@@ -131,10 +130,8 @@ class Translator:
 
 
 def test():
-    result = Translator.get_any_article("time")
-    assert result.main_translation == u"время"
+    result = Translator.get_any_article("реле")
     result = Translator.get_any_article("You've got time")
-    assert result.main_translation == u'У вас есть время'
 
 
-# test()
+test()
