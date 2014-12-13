@@ -14,10 +14,10 @@ import java.util.List;
 /**
  * helps to work with database.
  * usage:
- *     DBAdapter.connect();
- *     DBAdapter.add..
- *     DBAdapter.get..
- *     DBAdapter.close()
+ * DBAdapter.connect();
+ * DBAdapter.add..
+ * DBAdapter.get..
+ * DBAdapter.close()
  */
 public class DBAdapter {
     public static Connection connection;
@@ -108,6 +108,8 @@ public class DBAdapter {
         System.out.println("Database cleared");
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+
 
     /**
      * add a user to database, creates default "history" list.
@@ -148,6 +150,7 @@ public class DBAdapter {
         }
         return null;
     }
+
 
     /**
      * adds list to usr by his id.
@@ -200,6 +203,17 @@ public class DBAdapter {
             return wordsList;
         }
         return null;
+    }
+
+    /**
+     * deletes specified list and all the bindings between it and words.
+     * words itself are leaving in the database even when no list contains it.
+     * @param list_id
+     * @throws SQLException
+     */
+    public static void deleteList(int list_id) throws SQLException{
+        statement.execute("DELETE FROM 'lists' WHERE id = '" + list_id  + "'); ");
+        statement.execute("DELETE FROM 'words_in_lists' WHERE list_id = '" + list_id  + "'); ");
     }
 
     /**
@@ -260,6 +274,16 @@ public class DBAdapter {
     }
 
     /**
+     * deletes the words from database and destroys all the binding it to every list
+     * @param word_id
+     * @throws SQLException
+     */
+    public static void deleteWord(int word_id) throws SQLException {
+        statement.execute("DELETE FROM 'words' WHERE id = '" + word_id  + "'); ");
+        statement.execute("DELETE FROM 'words_in_lists' WHERE word_id = '" + word_id  + "'); ");
+    }
+
+    /**
      * returns all the words in the specified list
      *
      * @param list_id
@@ -309,6 +333,7 @@ public class DBAdapter {
 
     /**
      * associates a cookie-value with specified user
+     *
      * @param user_id
      * @param value
      * @throws SQLException
@@ -317,9 +342,18 @@ public class DBAdapter {
         statement.execute("INSERT INTO 'cookies' ('user_id', 'value') VALUES ( " + user_id + " , '" + value + "'); ");
     }
 
+    /**
+     * deletes a cookie associated with specifies user.
+     * @param user_id
+     * @throws SQLException
+     */
+    public static void deleteCookie(int user_id) throws SQLException {
+        statement.execute("DELETE FROM 'cookies' WHERE user_id = '" + user_id  + "'); ");
+    }
 
     /**
      * return user id by cookie or -1 if not exists
+     *
      * @param value
      * @return
      * @throws SQLException
@@ -338,6 +372,7 @@ public class DBAdapter {
 
     /**
      * return cookie-value by user id or null otherwise
+     *
      * @param user_id
      * @return
      * @throws SQLException
