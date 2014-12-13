@@ -14,11 +14,10 @@ import java.util.List;
 /**
  * helps to work with database.
  * usage:
- *     DBAdapter d = new...
- *     d.connect();
- *     d.add..
- *     d.get..
- *     d.close()
+ *     DBAdapter.connect();
+ *     DBAdapter.add..
+ *     DBAdapter.get..
+ *     DBAdapter.close()
  */
 public class DBAdapter {
     public static Connection connection;
@@ -35,6 +34,7 @@ public class DBAdapter {
         connection = null;
         Class.forName("org.sqlite.JDBC");
         connection = DriverManager.getConnection("jdbc:sqlite:ss.s3db");
+        statement = connection.createStatement();
 
         System.out.println("data base connected successfully!");
     }
@@ -46,8 +46,6 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void createTables() throws SQLException {
-        statement = connection.createStatement();
-
         statement.execute("CREATE TABLE if not exists 'users' " +
                 "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "'login' text unique, " +
@@ -101,12 +99,13 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void drop() throws SQLException {
-        statement.execute("DROP TABLE if not exists 'users';");
-        statement.execute("DROP TABLE if not exists 'words';");
-        statement.execute("DROP TABLE if not exists 'lists';");
-        statement.execute("DROP TABLE if not exists 'words_in_lists';");
-        statement.execute("DROP TABLE if not exists 'cookies';");
+        statement.execute("DROP TABLE if exists 'users';");
+        statement.execute("DROP TABLE if exists 'words';");
+        statement.execute("DROP TABLE if exists 'lists';");
+        statement.execute("DROP TABLE if exists 'words_in_lists';");
+        statement.execute("DROP TABLE if exists 'cookies';");
         createTables();
+        System.out.println("Database cleared");
     }
 
 
@@ -125,12 +124,10 @@ public class DBAdapter {
         int id = u.id;
 
         addList(id, "history");
-
-        System.out.println("added user: " + u.toString());
     }
 
     /**
-     * returns user from table iff login and password match, throws NullPointerException otherwise
+     * returns user from table iff login and password match
      *
      * @param login
      * @param password
@@ -147,11 +144,9 @@ public class DBAdapter {
             String pw = resultSet.getString("password");
             User u = new User(id, lg, pw);
 
-            System.out.println("got user: " + u.toString());
-
             return u;
         }
-        throw new NullPointerException();
+        return null;
     }
 
     /**
@@ -166,7 +161,7 @@ public class DBAdapter {
     }
 
     /**
-     * returns id of list by it's name owned by the user or thrown NullPointer if it doed not exist.
+     * returns id of list by it's name owned by the user or -1 if doesn't exist
      *
      * @param user_id
      * @param name
@@ -181,11 +176,11 @@ public class DBAdapter {
             int id = resultSet.getInt("id");
             return id;
         }
-        throw new NullPointerException();
+        return -1;
     }
 
     /**
-     * returns WordsList object ot throws nullPointerException
+     * returns WordsList object or null if now exists
      *
      * @param user_id
      * @param name
@@ -202,15 +197,13 @@ public class DBAdapter {
             String nm = resultSet.getString("name");
             WordsList wordsList = new WordsList(id, uid, nm);
 
-            System.out.println("got user: " + wordsList.toString());
-
             return wordsList;
         }
-        throw new NullPointerException();
+        return null;
     }
 
     /**
-     * inserts a word to words and associcates it with specified list
+     * inserts a word to words and associated it with specified list
      *
      * @param list_id
      * @param word
@@ -221,12 +214,12 @@ public class DBAdapter {
     public static void addWord(int list_id, String word, String translation, String article_json) throws SQLException {
 
         statement.execute("INSERT INTO 'words' ('word', 'translation', 'article_json') " +
-                "VALUES (" + word + " , " + translation + " , " + article_json + "); ");
+                "VALUES ('" + word + "' , '" + translation + "' , '" + article_json + "'); ");
 
         int word_id = getWordID(word);
 
         statement.execute("INSERT INTO 'words_in_lists' ('list_id', 'word_id') " +
-                "VALUES (" + list_id + " , " + word_id + "); ");
+                "VALUES ('" + list_id + "' , '" + word_id + "');");
 
     }
 
@@ -249,11 +242,9 @@ public class DBAdapter {
 
             Word w = new Word(id, wd, tr, js);
 
-            System.out.println("got user: " + w.toString());
-
             return w;
         }
-        throw new NullPointerException();
+        return null;
     }
 
     /**
@@ -276,8 +267,8 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static List<Word> getAllWordsFromList(int list_id) throws SQLException {
-        resultSet = statement.executeQuery("SELECT * FROM words " +
-                "WHERE words_in_lists.list_id='" + list_id + "' AND words.id=words_in_lists.words_id;");
+        resultSet = statement.executeQuery("SELECT words.id, word, translation, article_json FROM words JOIN words_in_lists " +
+                "ON words_in_lists.list_id='" + list_id + "' AND words.id=words_in_lists.word_id;");
 
         List<Word> list = new ArrayList<Word>();
 

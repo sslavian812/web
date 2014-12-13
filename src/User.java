@@ -2,9 +2,9 @@
  * Created by viacheslav on 13.12.14.
  */
 public class User {
-    public static int id;
-    public static String login;
-    public static String password;
+    public int id;
+    public String login;
+    public String password;
 
     User(int id, String login, String password) {
         this.id = id;
