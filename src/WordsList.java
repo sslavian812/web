@@ -2,9 +2,9 @@
  * Created by viacheslav on 13.12.14.
  */
 public class WordsList {
-    public static int id;
-    public static int user_id;
-    public static String name;
+    public int id;
+    public int user_id;
+    public String name;
 
     WordsList(int id, int user_id, String name) {
         this.id = id;
