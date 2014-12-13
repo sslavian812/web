@@ -11,6 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * helps to work with database.
+ * usage:
+ *     DBAdapter d = new...
+ *     d.connect();
+ *     d.add..
+ *     d.get..
+ *     d.close()
+ */
 public class DBAdapter {
     public static Connection connection;
     public static Statement statement;
@@ -41,13 +50,13 @@ public class DBAdapter {
 
         statement.execute("CREATE TABLE if not exists 'users' " +
                 "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'login' text, " +
+                "'login' text unique, " +
                 "'password' text);");
 
         statement.execute("CREATE TABLE if not exists 'cookies' " +
                 "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'user_id' INTEGER, " +
-                "'value' text, " +
+                "'user_id' INTEGER unique, " +
+                "'value' text unique, " +
                 "FOREIGN KEY(user_id) REFERENCES users(id));");
 
         statement.execute("CREATE TABLE if not exists 'lists' " +
@@ -58,7 +67,7 @@ public class DBAdapter {
 
         statement.execute("CREATE TABLE if not exists 'words' " +
                 "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'word' text, " +
+                "'word' text unique, " +
                 "'translation' text, " +
                 "'article_json' text);");
 
@@ -88,6 +97,7 @@ public class DBAdapter {
 
     /**
      * clears all data in tables
+     *
      * @throws SQLException
      */
     public static void drop() throws SQLException {
@@ -260,15 +270,16 @@ public class DBAdapter {
 
     /**
      * returns all the words in the specified list
+     *
      * @param list_id
      * @return
      * @throws SQLException
      */
-    public static List<Word> getAllWordsFromList(int list_id) throws SQLException{
+    public static List<Word> getAllWordsFromList(int list_id) throws SQLException {
         resultSet = statement.executeQuery("SELECT * FROM words " +
-                "WHERE words_in_lists.list_id='" +list_id  + "' AND words.id=words_in_lists.words_id;");
+                "WHERE words_in_lists.list_id='" + list_id + "' AND words.id=words_in_lists.words_id;");
 
-        List<Word> list= new ArrayList<Word>();
+        List<Word> list = new ArrayList<Word>();
 
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
@@ -284,13 +295,14 @@ public class DBAdapter {
 
     /**
      * return all the Lists owned by user
+     *
      * @param user_id
      * @return
      * @throws SQLException
      */
-    public static List<WordsList> getAllListsFromUser(int user_id) throws SQLException{
+    public static List<WordsList> getAllListsFromUser(int user_id) throws SQLException {
         resultSet = statement.executeQuery("SELECT * FROM lists " +
-                "WHERE user_id='" + user_id +"';");
+                "WHERE user_id='" + user_id + "';");
 
         List<WordsList> list = new ArrayList<WordsList>();
 
@@ -302,5 +314,52 @@ public class DBAdapter {
             list.add(wordsList);
         }
         return list;
+    }
+
+    /**
+     * associates a cookie-value with specified user
+     * @param user_id
+     * @param value
+     * @throws SQLException
+     */
+    public static void addCookie(int user_id, String value) throws SQLException {
+        statement.execute("INSERT INTO 'cookies' ('user_id', 'value') VALUES ( " + user_id + " , '" + value + "'); ");
+    }
+
+
+    /**
+     * return user id by cookie or -1 if not exists
+     * @param value
+     * @return
+     * @throws SQLException
+     */
+    public static int getUserIdFromCookie(String value) throws SQLException {
+        resultSet = statement.executeQuery("SELECT * FROM cookies " +
+                "WHERE value='" + value + "';");
+
+        while (resultSet.next()) {
+            int id = resultSet.getInt("user_id");
+
+            return id;
+        }
+        return -1;
+    }
+
+    /**
+     * return cookie-value by user id or null otherwise
+     * @param user_id
+     * @return
+     * @throws SQLException
+     */
+    public static String getCookieFromUser(int user_id) throws SQLException {
+        resultSet = statement.executeQuery("SELECT * FROM cookies " +
+                "WHERE user_id='" + user_id + "';");
+
+        while (resultSet.next()) {
+            String val = resultSet.getString("value");
+
+            return val;
+        }
+        return null;
     }
 }
