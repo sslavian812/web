@@ -1,3 +1,5 @@
+import db.DBAdapter;
+
 public class Main {
 
     public static void main(String[] args) {
