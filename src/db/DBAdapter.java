@@ -1,4 +1,4 @@
-/**
+package db; /**
  * Created by viacheslav on 13.12.14.
  */
 
@@ -14,10 +14,10 @@ import java.util.List;
 /**
  * helps to work with database.
  * usage:
- * DBAdapter.connect();
- * DBAdapter.add..
- * DBAdapter.get..
- * DBAdapter.close()
+ * db.DBAdapter.connect();
+ * db.DBAdapter.add..
+ * db.DBAdapter.get..
+ * db.DBAdapter.close()
  */
 public class DBAdapter {
     public static Connection connection;
@@ -183,7 +183,7 @@ public class DBAdapter {
     }
 
     /**
-     * returns WordsList object or null if now exists
+     * returns db.WordsList object or null if now exists
      *
      * @param user_id
      * @param name
@@ -238,7 +238,7 @@ public class DBAdapter {
     }
 
     /**
-     * return Word object, or null if it not exists
+     * return db.Word object, or null if it not exists
      *
      * @param word
      * @return
