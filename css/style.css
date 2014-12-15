@@ -64,10 +64,64 @@ body {
 	display: none;
 }
 
+
 .button:hover {
 	box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
 	transition-delay: 0s;
 }
+span {
+	word-wrap: break-word;
+	display: block;
+}
+.body #word_section .word .pos {
+	color: #a6a6a6;
+}
+.body #word_section .word .tran .tran_text {
+	color: #313131;
+}
+.body #word_section .word .tran .tran_mean {
+	color: #a8a8a8;
+}
+.body #word_section .word {
+	margin: 10px;
+	padding: 10px;
+	border: 1px solid #CCC;
+}
+.body #word_section .word .tran .ex {
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	padding-left: 20px;
+}
+.body #word_section .word .tran {
+	padding-top: 5px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+.body #word_section .original .original_text {
+	color: #1d1d1d;
+	font-size: x-large;
+}
+.body #word_section .original {
+	margin: 10px;
+	padding: 10px;
+	border: 1px solid #CCC;
+}
+
+
+
+
+
+.body #word_section .word .tran .ex .tran_ex {
+	color: #0664a2;
+}
+
+
+
+
+
+
 .center {
       text-align: center;
 }
@@ -112,6 +166,92 @@ body {
 	float: right;
 	margin: 30px;
 	color: #f7fdfd;
+}
+.main .body #main_section {
+	width: 521px;
+	float: left;
+	overflow: auto;
+	margin-top: 10px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+.main .body #main_section #original_word {
+	font-size: large;
+	padding: 10px;
+	width: 420px;
+	float: left;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	margin-right: 0px;
+}
+.main .body #main_section #translate {
+	display: inline-block;
+	position: relative;
+	line-height: 32px;
+	border-radius: 2px;
+	font-size: 0.9em;
+	background-color: #f7fdfd;
+	color: #78909c;
+	font-variant: normal;
+	width: 36px;
+	height: 36px;
+	float: right;
+	padding-top: 4px;
+	padding-right: 14px;
+	padding-bottom: 4px;
+	padding-left: 14px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+.main .body #main_section #translate:hover {
+	box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2);
+	transition-delay: 0s;
+}
+.body #main_section #dict_list {
+	clear: both;
+	float: left;
+	height: 515px;
+	width: 250px;
+	border: 1px solid #CCC;
+	padding: 0px;
+	margin-top: 10px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+.body #main_section #word_list {
+	clear: right;
+	float: right;
+	height: 515px;
+	width: 250px;
+	border: 1px solid #CCC;
+	padding: 0px;
+	margin-top: 10px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	margin-left: 0px;
+}
+
+
+
+.main .body #word_section {
+	width: 450px;
+	border: 1px solid #CCC;
+	height: 591px;
+	float: right;
+	margin-top: 9px;
+	margin-right: 9px;
+	margin-bottom: 9px;
+	margin-left: 0px;
+	overflow: scroll;
+}
+.main .body {
+	overflow: auto;
 }
 
 #sign_in_window .input_section {
