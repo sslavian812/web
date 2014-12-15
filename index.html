@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Untitled Document</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<link rel="import" href="http://www.polymer-project.org/components/paper-ripple/paper-ripple.html">
+	<link rel="import" href="http://www.polymer-project.org/components/core-icons/core-icons.html">
+</head>
+
+<body>
+<div class="main">
+		<div class="header">
+    		<p>Slate</p>
+            <div class="button" id="sign_up">  	   	
+      			<div class="center" fit>SIGN UP</div>
+      			<paper-ripple fit></paper-ripple>
+   		  	</div>
+   		  	<div class="button" id="sign_in">  	   	
+      			<div class="center" fit>SIGN IN</div>
+      			<paper-ripple fit></paper-ripple>
+    		</div>
+ 			<div class="button" id="sign_out">  	   	
+      			<div class="center" fit>SIGN OUT</div>
+      			<paper-ripple fit></paper-ripple>
+    		</div>
+		</div>
+	</div>
+	<div id="sign_in_window">
+		<div class="header">
+       		<p>Sign in</p> 
+			<div class="icon-button" id="close_sign_in">
+				<core-icon icon="close"></core-icon>
+				<paper-ripple class="circle recenteringTouch" fit></paper-ripple>
+			</div>
+		</div>  
+		<div class="input_section">
+        	<input id="si_login" type="text" placeholder="Login"/>            	
+        </div>
+		<div class="input_section">
+        	<input id="si_password" type="password" placeholder="Password"/>
+		</div>
+		<div class="button" id="sub_sign_in">  	   	
+   			<div class="center" fit>SIGN IN</div>
+   			<paper-ripple fit></paper-ripple>
+   		</div>
+	</div>
+    <div id="sign_up_window">
+		<div class="header">
+       		<p>Sign up</p> 
+			<div class="icon-button" id="close_sign_up">
+				<core-icon icon="close"></core-icon>
+				<paper-ripple class="circle recenteringTouch" fit></paper-ripple>
+			</div>
+		</div>  
+		<div class="input_section">
+        	<input id="su_login" type="text" placeholder="Login"/>            	
+        </div>
+		<div class="input_section">
+        	<input id="su_password" type="password" placeholder="Password"/>
+		</div>
+        <div class="input_section">
+        	<input id="sur_password" type="password" placeholder="Repeat password"/>
+		</div>
+		<div class="button" id="sub_sign_up">  	   	
+   			<div class="center" fit>SIGN UP</div>
+   			<paper-ripple fit></paper-ripple>
+   		</div>
+	</div>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>
