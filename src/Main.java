@@ -11,16 +11,16 @@ public class Main {
             adapter.connect();
             adapter.createTables();
             adapter.addUser("vas", "vas123");
-            adapter.getUser("vas", "vas123");
+            adapter.getUserByCredentials("vas", "vas123");
 
 
             System.out.println();
 
             adapter.addUser("pet", "pet123");
 
-            adapter.getUser("vas", "pet123");
-            adapter.getUser("vas", "vas123");
-            adapter.getUser("pet", "pet123");
+            adapter.getUserByCredentials("vas", "pet123");
+            adapter.getUserByCredentials("vas", "vas123");
+            adapter.getUserByCredentials("pet", "pet123");
 
 
             adapter.close();

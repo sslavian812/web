@@ -20,5 +20,16 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 8.0.15" level="application_server_libraries" />
+    <orderEntry type="module-library">
+      <library name="sqlite-jdbc-3.8.7">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/sqlite-jdbc-3.8.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/sqlite-jdbc-3.8.7.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
