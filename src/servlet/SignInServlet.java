@@ -32,7 +32,7 @@ public class SignInServlet extends HttpServlet {
     /**
      * Performs a user authentication.
      *
-     * @param request should look like "/signin?username=...&password=..."
+     * @param request  should look like "/signin?username=...&password=..."
      * @param response will contain a cookie or an error information
      * @throws ServletException
      * @throws IOException

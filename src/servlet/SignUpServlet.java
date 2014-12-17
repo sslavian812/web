@@ -35,7 +35,8 @@ public class SignUpServlet extends HttpServlet {
     /**
      * Handles signup request, checks it for validity and if it's OK registers the new user.
      * Sends an auth cookie for to the user.
-     * @param request should look like "/signup?username=...&password=..."
+     *
+     * @param request  should look like "/signup?username=...&password=..."
      * @param response contains an auth cookie if the signing up was successful
      * @throws ServletException
      * @throws IOException
@@ -44,7 +45,7 @@ public class SignUpServlet extends HttpServlet {
         String username = request.getParameter(PARAM_USERNAME);
         String password = request.getParameter(PARAM_PASSWORD);
         if (username == null || username.length() == 0
-         || password == null || password.length() == 0) {
+                || password == null || password.length() == 0) {
             writeResult(ERR_CODE_BAD_REQUEST, response);
             return;
         }
