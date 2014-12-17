@@ -9,7 +9,7 @@ public class Word {
     public String translation;
     public String article_json;
 
-    Word(int id, String word, String translation, String article_json) {
+    public Word(int id, String word, String translation, String article_json) {
         this.id = id;
         this.word = word;
         this.translation = translation;

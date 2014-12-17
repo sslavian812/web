@@ -212,7 +212,7 @@ public class DoServlet extends HttpServlet {
 
             List<Word> words = DBAdapter.getAllWordsFromList(list_id);
 
-            List<Map<String, String> > answerList= new ArrayList<>();
+            List<Map<String, String>> answerList = new ArrayList<>();
 
             for (Word w : words) {
                 Map<String, String> map = new HashMap<>();

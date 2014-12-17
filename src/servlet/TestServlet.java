@@ -20,12 +20,12 @@ public class TestServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletOutputStream out = response.getOutputStream();
-        out.println("Path: "+request.getPathInfo());
+        out.println("Path: " + request.getPathInfo());
         out.println(request.getCookies().length + " cookies");
         for (Cookie c : request.getCookies()) {
             out.println(c.getName() + " = " + c.getValue());
         }
-        out.println("Query: "+request.getQueryString());
+        out.println("Query: " + request.getQueryString());
         response.addCookie(new Cookie("name", "value"));
     }
 }
