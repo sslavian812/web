@@ -68,7 +68,7 @@ public class DBAdapter {
         statement.execute("CREATE TABLE if not exists 'cookies' " +
                 "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "'user_id' INTEGER, " +
-                "'value' text unique, " +
+                "'auth' text unique, " +
                 "FOREIGN KEY(user_id) REFERENCES users(id));");
 
         statement.execute("CREATE TABLE if not exists 'lists' " +
@@ -181,9 +181,9 @@ public class DBAdapter {
      */
     public static User getUserByAuthCookie(String authCookie) throws SQLException {
         resultSet = statement.executeQuery(
-                "SELECT * FROM cookies WHERE value=" + authCookie + ";"
+                "SELECT * FROM cookies WHERE auth='" + authCookie + "';"
         );
-        if (resultSet.first()) {
+        if (resultSet.next()) {
             long id = resultSet.getLong("user_id");
             User result = getUserWhere("id=" + id);
             return result;
@@ -425,7 +425,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void addCookie(long user_id, String value) throws SQLException {
-        statement.execute("INSERT INTO 'cookies' ('user_id', 'value') VALUES ( " + user_id + " , '" + value + "'); ");
+        statement.execute("INSERT INTO 'cookies' ('user_id', 'auth') VALUES ( " + user_id + " , '" + value + "'); ");
     }
 
     /**
@@ -451,7 +451,7 @@ public class DBAdapter {
 
         ArrayList<String> results = new ArrayList<>();
         while (resultSet.next()) {
-            String val = resultSet.getString("value");
+            String val = resultSet.getString("auth");
             results.add(val);
         }
         return results;

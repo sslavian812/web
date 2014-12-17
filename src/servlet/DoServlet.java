@@ -5,6 +5,7 @@ import db.DBAdapter;
 import db.User;
 import db.Word;
 import db.WordsList;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -17,10 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Sergey on 14.12.2014.
@@ -44,7 +42,7 @@ public class DoServlet extends HttpServlet {
         User user = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            if (cookie.getName() == COOKIE_AUTH)
+            if (Objects.equals(cookie.getName(), COOKIE_AUTH))
                 user = CookieManager.validateCookie(cookie.getValue());
         }
 
@@ -187,10 +185,10 @@ public class DoServlet extends HttpServlet {
                     content.add(wl.name);
                 }
 
-                JSONObject errorObj = new JSONObject(content); // do I need to add OK-code here?
+                JSONArray resultObj = new JSONArray(content.toArray()); // do I need to add OK-code here?
                 try {
                     ServletOutputStream out = response.getOutputStream();
-                    out.print(errorObj.toString());
+                    out.print(resultObj.toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
