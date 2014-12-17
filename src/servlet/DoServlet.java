@@ -8,15 +8,14 @@ import db.WordsList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -173,7 +172,7 @@ public class DoServlet extends HttpServlet {
 
         String list_name = request.getParameter(PARAM_LIST_NAME);
 
-        if (list_name == null || list_name.length() == 0) {
+        if ("list".equals(obj) && (list_name == null || list_name.length() == 0)) {
             // get all lists
             try {
                 DBAdapter.connect();
@@ -187,8 +186,8 @@ public class DoServlet extends HttpServlet {
 
                 JSONArray resultObj = new JSONArray(content.toArray()); // do I need to add OK-code here?
                 try {
-                    ServletOutputStream out = response.getOutputStream();
-                    out.print(resultObj.toString());
+                    PrintWriter out = response.getWriter();
+                    out.print(resultObj.toString(4));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -199,39 +198,42 @@ public class DoServlet extends HttpServlet {
                 DBAdapter.close();
             }
             return;
-        }
-
-        try {
-            // get all lists in list list_name
-            DBAdapter.connect();
-            int list_id = DBAdapter.getListId(id, list_name);
-            if (list_id == -1) {
-                writeResult(ERR_INTERNAL, response);
-                return;
-            }
-
-            List<Word> words = DBAdapter.getAllWordsFromList(list_id);
-
-            List<Map<String, String>> answerList = new ArrayList<>();
-
-            for (Word w : words) {
-                Map<String, String> map = new HashMap<>();
-                map.put(w.word, w.translation);
-                answerList.add(map);
-            }
-
-            JSONObject errorObj = new JSONObject(answerList);    // do I need to add OK-code here?
+        } else if ("word".equals(obj)) {
             try {
-                ServletOutputStream out = response.getOutputStream();
-                out.print(errorObj.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                DBAdapter.close();
+                // get all lists in list list_name
+                DBAdapter.connect();
+                int list_id = DBAdapter.getListId(id, list_name);
+                if (list_id == -1) {
+                    writeResult(ERR_INTERNAL, response);
+                    return;
+                }
+
+                List<Word> words = DBAdapter.getAllWordsFromList(list_id);
+
+                List<Object> answerList = new ArrayList<>();
+
+                for (Word w : words) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("word", w.word);
+                    map.put("translation", w.translation);
+                    answerList.add(map);
+                }
+
+                JSONArray resultObj = new JSONArray(answerList.toArray());    // do I need to add OK-code here?
+                try {
+                    response.setCharacterEncoding("UTF-8");
+                    PrintWriter out = response.getWriter();
+                    out.print(resultObj.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    DBAdapter.close();
+                }
+            } catch (SQLException e) {
+                writeResult(ERR_INTERNAL, response);
             }
-        } catch (SQLException e) {
-            writeResult(ERR_INTERNAL, response);
-            return;
+        } else {
+            writeResult(ERR_CODE_BAD_REQUEST, response);
         }
     }
 
@@ -245,7 +247,7 @@ public class DoServlet extends HttpServlet {
         content.put("code", errorCode);
         JSONObject errorObj = new JSONObject(content);
         try {
-            ServletOutputStream out = response.getOutputStream();
+            PrintWriter out = response.getWriter();
             out.print(errorObj.toString());
         } catch (IOException e) {
             e.printStackTrace();

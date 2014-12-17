@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,19 +76,21 @@ public class TranslateServlet extends HttpServlet {
 
             int id = authenticateUser(request);
             if (id != -1) {
+                DBAdapter.connect();
                 int list_id = DBAdapter.getListId(id, "history");
                 DBAdapter.addWord(list_id, word.word, word.translation, word.article_json);
             }
 
-            Map<String, String> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("word", word.word);
             map.put("translation", word.translation);
             map.put("article_json", word.article_json);
 
             JSONObject json = new JSONObject(map);
-            ServletOutputStream out = response.getOutputStream();
-            out.print(json.toString());
-            return;
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter out = response.getWriter();
+            String result = json.toString(4).replace("\\", "");
+            out.print(result);
         } catch (SQLException e) {
             e.printStackTrace();
             writeError(response);

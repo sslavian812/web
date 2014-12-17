@@ -1,6 +1,7 @@
 package translate;
 
 import db.Word;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.imageio.IIOException;
@@ -41,7 +42,7 @@ public class Translator {
             String result = builder.toString();
             JSONObject jsonObject = new JSONObject(result);
             String lang = jsonObject.getString("lang");
-            if ("en".equals("lang"))
+            if ("en".equals(lang))
                 return "en-ru";
             else
                 return "ru-en";
@@ -74,7 +75,7 @@ public class Translator {
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setConnectTimeout(4000);
             connection.connect();
-            InputStreamReader reader = new InputStreamReader(connection.getInputStream());
+            InputStreamReader reader = new InputStreamReader(connection.getInputStream(), "UTF-8");
             StringBuilder builder = new StringBuilder();
             char[] buffer = new char[8192]; // 8KB
             for (int read; (read = reader.read(buffer)) > 0; ) {
@@ -92,7 +93,10 @@ public class Translator {
         String json = getJson(text);
         JSONObject jsonObject = new JSONObject(json);
 
-        String translation = jsonObject.getJSONObject("def").getJSONArray("tr").getJSONObject(0).getString("text");
+        JSONArray def = jsonObject.getJSONArray("def");
+        String translation = null;
+        if (def.length() > 0)
+            translation = def.getJSONObject(0).getJSONArray("tr").getJSONObject(0).getString("text");
 
         return new Word(-2, text, translation, json);
     }
