@@ -79,7 +79,7 @@ public class DBAdapter {
 
         statement.execute("CREATE TABLE if not exists 'words' " +
                 "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'word' text unique, " +
+                "'word' text unique on conflict ignore, " +
                 "'translation' text, " +
                 "'article_json' text);");
 
@@ -378,7 +378,7 @@ public class DBAdapter {
      */
     public static List<Word> getAllWordsFromList(int list_id) throws SQLException {
         resultSet = statement.executeQuery("SELECT words.id, word, translation, article_json FROM words JOIN words_in_lists " +
-                "ON words_in_lists.list_id='" + list_id + "' AND words.id=words_in_lists.word_id;");
+                "ON (words.id=words_in_lists.word_id) WHERE words_in_lists.list_id=" + list_id + ";");
 
         List<Word> list = new ArrayList<Word>();
 

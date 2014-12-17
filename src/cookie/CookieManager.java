@@ -57,11 +57,11 @@ public class CookieManager {
     public static long identifyRequest(HttpServletRequest request) {
         User user = null;
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (Objects.equals(cookie.getName(), COOKIE_AUTH))
-                user = CookieManager.validateCookie(cookie.getValue());
+        if (cookies != null)
+            for (Cookie cookie : cookies) {
+                if (Objects.equals(cookie.getName(), COOKIE_AUTH))
+                    user = CookieManager.validateCookie(cookie.getValue());
         }
-
         if (user == null)
             return -1;
         else

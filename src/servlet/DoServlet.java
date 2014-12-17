@@ -107,7 +107,7 @@ public class DoServlet extends HttpServlet {
                 }
 
                 if (ACTION_ADD.equals(action)) {
-                    DBAdapter.addWordToList(word_id, list_id);
+                    DBAdapter.addWordToList(list_id, word_id);
                 } else if (ACTION_DELETE.equals(action)) {
                     if ("*".equals(list_name)) {
                         List<WordsList> lists = DBAdapter.getAllListsFromUser(id);

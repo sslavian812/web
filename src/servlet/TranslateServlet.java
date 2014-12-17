@@ -4,6 +4,7 @@ import cookie.CookieManager;
 import db.DBAdapter;
 import db.User;
 import db.Word;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import translate.Translator;
 
@@ -69,7 +70,7 @@ public class TranslateServlet extends HttpServlet {
             Map<String, Object> map = new HashMap<>();
             map.put("word", word.word);
             map.put("translation", word.translation);
-            map.put("article_json", word.article_json);
+            map.put("article_json", new JSONObject(word.article_json));
 
             JSONObject json = new JSONObject(map);
             response.setCharacterEncoding("UTF-8");
