@@ -24,16 +24,21 @@ API:
 
 /do?object=list&action=get
 	получить все списки слов
+
 /do?object=list&action=add&list=name
 	создать список с именем name
+
 /do?object=list&action=delete&list=name
 	удалить список с именем name
 
 /do?object=word&action=get&list=name
 	получить все слова из списка юзера
+
 /do?object=word&actionadd=&list=name&word=word
 	добавить слово word в список (слово уже должно содержаться в базе, например в списке history у даного юзера)
+
 /do?object=word&action=delete&list=name&word=word
 		удалить слово word из списка name у текущего юзера
+
 /do?object=word&action=delete&list=*&word=word
 	удалить слово word из всех списков юзера
