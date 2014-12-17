@@ -273,7 +273,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void deleteList(int list_id) throws SQLException {
-        statement.execute("DELETE FROM 'lists' WHERE id = '" + list_id + "'); ");
+        statement.execute("DELETE FROM 'lists' WHERE id = '" + list_id + "'; ");
         statement.execute("DELETE FROM 'words_in_lists' WHERE list_id = '" + list_id + "'); ");
     }
 

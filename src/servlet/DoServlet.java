@@ -70,7 +70,7 @@ public class DoServlet extends HttpServlet {
         }
 
         String action = request.getParameter(PARAM_ACTION);
-        if (!"get".equals(action) && !"delete".equals(action)) {
+        if (!"add".equals(action) && !"delete".equals(action)) {
             writeResult(ERR_CODE_BAD_REQUEST, response);
             return;
         }
