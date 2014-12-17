@@ -211,13 +211,16 @@ public class DoServlet extends HttpServlet {
             }
 
             List<Word> words = DBAdapter.getAllWordsFromList(list_id);
-            Map<String, String> map = new HashMap<>();
+
+            List<Map<String, String> > answerList= new ArrayList<>();
 
             for (Word w : words) {
+                Map<String, String> map = new HashMap<>();
                 map.put(w.word, w.translation);
+                answerList.add(map);
             }
 
-            JSONObject errorObj = new JSONObject(map);    // do I need to add OK-code here?
+            JSONObject errorObj = new JSONObject(answerList);    // do I need to add OK-code here?
             try {
                 ServletOutputStream out = response.getOutputStream();
                 out.print(errorObj.toString());
