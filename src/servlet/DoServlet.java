@@ -30,33 +30,16 @@ public class DoServlet extends HttpServlet {
     public static final String PARAM_LIST_NAME = "list";
     public static final String PARAM_WORD_NAME = "word";
 
-    public static final String COOKIE_AUTH = "auth";
-
     public static final String ACTION_ADD = "add";
     public static final String ACTION_GET = "get";
     public static final String ACTION_DELETE = "delete";
-
-
-    int authenticateUser(HttpServletRequest request) {
-        User user = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (Objects.equals(cookie.getName(), COOKIE_AUTH))
-                user = CookieManager.validateCookie(cookie.getValue());
-        }
-
-        if (user == null)
-            return -1;
-        else
-            return user.id;
-    }
 
     //    _list/add/list
     //    _list/delete/list
     //    _word/add/list/word
     //    _word/delete/list(*)/word
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id = authenticateUser(request);
+        int id = (int) CookieManager.identifyRequest(request);
         if (id == -1) {
             writeResult(ERR_CODE_AUTH_FAILURE, response);
             return;
@@ -151,7 +134,7 @@ public class DoServlet extends HttpServlet {
     //    _list/get/
     //    _word/get/list
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id = authenticateUser(request);
+        int id = (int) CookieManager.identifyRequest(request);
         if (id == -1) {
             writeResult(ERR_CODE_AUTH_FAILURE, response);
             return;

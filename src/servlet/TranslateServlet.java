@@ -30,27 +30,12 @@ import java.util.Objects;
 public class TranslateServlet extends HttpServlet {
 
     public static final String PARAM_WORD = "word";
-    public static final String COOKIE_AUTH = "auth";
 
     /**
-     * // todo: boilerplate code from DOServlet. should be reused
      *
      * @param request
      * @return
      */
-    int authenticateUser(HttpServletRequest request) {
-        User user = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (Objects.equals(cookie.getName(), COOKIE_AUTH))
-                user = CookieManager.validateCookie(cookie.getValue());
-        }
-
-        if (user == null)
-            return -1;
-        else
-            return user.id;
-    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         onRequest(request, response);
@@ -74,7 +59,7 @@ public class TranslateServlet extends HttpServlet {
                 word = Translator.translate(text);
             }
 
-            int id = authenticateUser(request);
+            int id = (int) CookieManager.identifyRequest(request);
             if (id != -1) {
                 DBAdapter.connect();
                 int list_id = DBAdapter.getListId(id, "history");

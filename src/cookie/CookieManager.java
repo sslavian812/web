@@ -3,7 +3,11 @@ package cookie;
 import db.DBAdapter;
 import db.User;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -46,5 +50,21 @@ public class CookieManager {
         finally {
             DBAdapter.close();
         }
+    }
+
+    public static final String COOKIE_AUTH = "auth";
+
+    public static long identifyRequest(HttpServletRequest request) {
+        User user = null;
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (Objects.equals(cookie.getName(), COOKIE_AUTH))
+                user = CookieManager.validateCookie(cookie.getValue());
+        }
+
+        if (user == null)
+            return -1;
+        else
+            return user.id;
     }
 }
