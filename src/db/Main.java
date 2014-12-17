@@ -16,10 +16,10 @@ public class Main {
             DBAdapter.addUser("u1", "p1");
             DBAdapter.addUser("u2", "p2");
 
-            User u1 = DBAdapter.getUser("u1", "p1");
+            User u1 = DBAdapter.getUserByCredentials("u1", "p1");
             System.out.println(u1.toString());
 
-            User u2 = DBAdapter.getUser("u2", "p2");
+            User u2 = DBAdapter.getUserByCredentials("u2", "p2");
             System.out.println(u2.toString());
 
 

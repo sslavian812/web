@@ -118,14 +118,27 @@ public class DBAdapter {
      * @param password
      * @throws SQLException
      */
-    public static void addUser(String login, String password) throws SQLException {
+    public static long addUser(String login, String password) throws SQLException {
         statement.execute("INSERT INTO 'users' ('login', 'password') VALUES ( '" + login + "' , '" + password + "'); ");
+        ResultSet results = statement.getGeneratedKeys();
+        if (results.next()) {
+            long id = results.getLong(1);
+            addList(id, "history");
+            return id;
+        }
+        return -1;
+    }
 
-        User u = getUser(login, password);
 
-        int id = u.id;
-
-        addList(id, "history");
+    /**
+     * Returns user given his login.
+     *
+     * @param login
+     * @return
+     * @throws SQLException
+     */
+    public static User getUserByLogin(String login) throws SQLException {
+        return getUserWhere("login="+login);
     }
 
     /**
@@ -136,17 +149,45 @@ public class DBAdapter {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public static User getUser(String login, String password) throws SQLException {
-        resultSet = statement.executeQuery("SELECT * FROM users " +
-                "WHERE login='" + login + "' AND password='" + password + "';");
+    public static User getUserByCredentials(String login, String password) throws SQLException {
+        return getUserWhere("login="+login +" AND password="+password);
+    }
 
-        while (resultSet.next()) {
+
+    /**
+     * Gets the first user which meets given SQL WHERE-statement
+     *
+     * @param where SQL WHERE statement
+     * @return User object or null if there's no such user
+     * @throws SQLException
+     */
+    private static User getUserWhere(String where) throws SQLException {
+        resultSet = statement.executeQuery("SELECT * FROM users " +
+                "WHERE " + where +";");
+        while (resultSet.first()) {
             int id = resultSet.getInt("id");
             String lg = resultSet.getString("login");
             String pw = resultSet.getString("password");
-            User u = new User(id, lg, pw);
 
-            return u;
+            return new User(id, lg, pw);
+        }
+        return null;
+    }
+
+    /**
+     * Get a user with the corresponding auth cookie or null if there's no such user.
+     * @param authCookie auth cookie to choose the user by
+     * @return User object or null if no user is found
+     * @throws SQLException
+     */
+    public static User getUserByAuthCookie(String authCookie) throws SQLException {
+        resultSet = statement.executeQuery(
+                "SELECT * FROM cookies WHERE value=" + authCookie + ";"
+        );
+        if (resultSet.first()) {
+            long id = resultSet.getLong("user_id");
+            User result = getUserWhere("id="+id);
+            return result;
         }
         return null;
     }
@@ -159,7 +200,7 @@ public class DBAdapter {
      * @param name
      * @throws SQLException
      */
-    public static void addList(int user_id, String name) throws SQLException {
+    public static void addList(long user_id, String name) throws SQLException {
         statement.execute("INSERT INTO 'lists' ('user_id', 'name') VALUES (" + user_id + ", \'" + name + "\'); ");
     }
 
@@ -338,7 +379,7 @@ public class DBAdapter {
      * @param value
      * @throws SQLException
      */
-    public static void addCookie(int user_id, String value) throws SQLException {
+    public static void addCookie(long user_id, String value) throws SQLException {
         statement.execute("INSERT INTO 'cookies' ('user_id', 'value') VALUES ( " + user_id + " , '" + value + "'); ");
     }
 
@@ -371,21 +412,21 @@ public class DBAdapter {
     }
 
     /**
-     * return cookie-value by user id or null otherwise
+     * return all valid cookies by user id in a list
      *
      * @param user_id
      * @return
      * @throws SQLException
      */
-    public static String getCookieFromUser(int user_id) throws SQLException {
+    public static List<String> getCookieFromUser(int user_id) throws SQLException {
         resultSet = statement.executeQuery("SELECT * FROM cookies " +
                 "WHERE user_id='" + user_id + "';");
 
+        ArrayList<String> results = new ArrayList<>();
         while (resultSet.next()) {
             String val = resultSet.getString("value");
-
-            return val;
+            results.add(val);
         }
-        return null;
+        return results;
     }
 }
