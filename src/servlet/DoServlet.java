@@ -127,12 +127,12 @@ public class DoServlet extends HttpServlet {
                 }
 
                 if (ACTION_ADD.equals(action)) {
-                    DBAdapter.addWordToList(word_id, list_id); // todo: add method to DB Interface
+                    DBAdapter.addWordToList(word_id, list_id);
                 } else if (ACTION_DELETE.equals(action)) {
                     if ("*".equals(list_name)) {
                         List<WordsList> lists = DBAdapter.getAllListsFromUser(id);
                         for (WordsList wl : lists) {
-                            DBAdapter.deleteWordFromList(word_id, wl.id); // todo: add method to DB Interface
+                            DBAdapter.deleteWordFromList(word_id, wl.id);
                         }
                     }
                     DBAdapter.deleteWordFromList(word_id, list_id);

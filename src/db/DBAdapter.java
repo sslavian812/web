@@ -150,6 +150,7 @@ public class DBAdapter {
 
     /**
      * Returns user given his login.
+     * Unsafe method. be careful.
      *
      * @param login
      * @return
@@ -171,6 +172,24 @@ public class DBAdapter {
         return getUserWhere("login='" + login + "' AND password='" + password + "'");
     }
 
+    /**
+     * Get a user with the corresponding auth cookie or null if there's no such user.
+     *
+     * @param authCookie auth cookie to choose the user by
+     * @return User object or null if no user is found
+     * @throws SQLException
+     */
+    public static User getUserByAuthCookie(String authCookie) throws SQLException {
+        resultSet = statement.executeQuery(
+                "SELECT * FROM cookies WHERE value=" + authCookie + ";"
+        );
+        if (resultSet.first()) {
+            long id = resultSet.getLong("user_id");
+            User result = getUserWhere("id=" + id);
+            return result;
+        }
+        return null;
+    }
 
     /**
      * Gets the first user which meets given SQL WHERE-statement
@@ -188,25 +207,6 @@ public class DBAdapter {
             String pw = resultSet.getString("password");
 
             return new User(id, lg, pw);
-        }
-        return null;
-    }
-
-    /**
-     * Get a user with the corresponding auth cookie or null if there's no such user.
-     *
-     * @param authCookie auth cookie to choose the user by
-     * @return User object or null if no user is found
-     * @throws SQLException
-     */
-    public static User getUserByAuthCookie(String authCookie) throws SQLException {
-        resultSet = statement.executeQuery(
-                "SELECT * FROM cookies WHERE value=" + authCookie + ";"
-        );
-        if (resultSet.first()) {
-            long id = resultSet.getLong("user_id");
-            User result = getUserWhere("id=" + id);
-            return result;
         }
         return null;
     }
@@ -347,8 +347,8 @@ public class DBAdapter {
     }
 
     /**
-     * deletes the words from database and destroys all the binding it to every list
-     *
+     * deletes the words from database and destroys all the binding it to every list.
+     * Suppose, we do need this method at all.
      * @param word_id
      * @throws SQLException
      */
@@ -439,32 +439,13 @@ public class DBAdapter {
     }
 
     /**
-     * return user id by cookie or -1 if not exists
-     *
-     * @param value
-     * @return
-     * @throws SQLException
-     */
-    public static int getUserIdFromCookie(String value) throws SQLException {
-        resultSet = statement.executeQuery("SELECT * FROM cookies " +
-                "WHERE value='" + value + "';");
-
-        while (resultSet.next()) {
-            int id = resultSet.getInt("user_id");
-
-            return id;
-        }
-        return -1;
-    }
-
-    /**
      * return all valid cookies by user id in a list
      *
      * @param user_id
      * @return
      * @throws SQLException
      */
-    public static List<String> getCookieFromUser(int user_id) throws SQLException {
+    public static List<String> getCookieByUserID(int user_id) throws SQLException {
         resultSet = statement.executeQuery("SELECT * FROM cookies " +
                 "WHERE user_id='" + user_id + "';");
 
