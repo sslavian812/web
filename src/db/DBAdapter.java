@@ -32,23 +32,25 @@ public class DBAdapter {
      * connects to DB
      */
     public static boolean connect() {
-        connection = null;
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
+        if (connection == null) {
+            try {
+                Class.forName("org.sqlite.JDBC");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+            try {
+                connection = DriverManager.getConnection("jdbc:sqlite:db/ss.s3db");
+                statement = connection.createStatement();
+                createTables();
+                System.out.println("data base connected successfully!");
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
-        try {
-            connection = DriverManager.getConnection("jdbc:sqlite:db/ss.s3db");
-            statement = connection.createStatement();
-            createTables();
-            System.out.println("data base connected successfully!");
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return true;
     }
 
     /**
@@ -65,7 +67,7 @@ public class DBAdapter {
 
         statement.execute("CREATE TABLE if not exists 'cookies' " +
                 "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'user_id' INTEGER unique, " +
+                "'user_id' INTEGER, " +
                 "'value' text unique, " +
                 "FOREIGN KEY(user_id) REFERENCES users(id));");
 
@@ -102,6 +104,7 @@ public class DBAdapter {
             statement.close();
             connection.close();
             System.out.println("Database closed");
+            connection = null;
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -125,7 +128,6 @@ public class DBAdapter {
     }
 
     //------------------------------------------------------------------------------------------------------------------
-
 
     /**
      * add a user to database, creates default "history" list.
