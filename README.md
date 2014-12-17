@@ -13,16 +13,23 @@ web
 API:
 ===
     /signup?username=u&password=p
-    100 -- OK, see cookies
-    300 -- bad request
-    301 -- username already exists
-    302 -- internal error
+	code:
+        100 -- OK, see token
+        300 -- bad request
+        301 -- username already exists
+        302 -- internal error
+    token: cookie value to save as "auth"
+    username: the user's name
 
-	/signin?username=u&password=password
-	100 -- OK, see cookies
-	300 -- bad request
-	301 -- access denied
-	302 -- internal error
+	/signin?username=u&password=password (or with no args to handshake)
+	code:
+	    100 -- OK, see token
+		101 -- "handshake" -- cookie is valid, you are %username%
+	    300 -- bad request
+	    301 -- access denied
+	    302 -- internal error
+    token: cookie value to save as "auth"
+    username: the user's name
 
 	/do?object=list&action=get
 	-- получить все списки слов

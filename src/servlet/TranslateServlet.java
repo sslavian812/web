@@ -48,6 +48,7 @@ public class TranslateServlet extends HttpServlet {
 
     private void onRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String text = request.getParameter(PARAM_WORD);
+        response.addHeader("Access-Control-Allow-Origin", "*");
 
         if (text == null || text.length() == 0) {
             writeError(response);

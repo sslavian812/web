@@ -39,6 +39,9 @@ public class DoServlet extends HttpServlet {
     //    _word/add/list/word
     //    _word/delete/list(*)/word
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.addHeader("Access-Control-Allow-Origin", "*");
+
         int id = (int) CookieManager.identifyRequest(request);
         if (id == -1) {
             writeResult(ERR_CODE_AUTH_FAILURE, response);
@@ -134,6 +137,8 @@ public class DoServlet extends HttpServlet {
     //    _list/get/
     //    _word/get/list
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+
         int id = (int) CookieManager.identifyRequest(request);
         if (id == -1) {
             writeResult(ERR_CODE_AUTH_FAILURE, response);
@@ -204,7 +209,6 @@ public class DoServlet extends HttpServlet {
 
                 JSONArray resultObj = new JSONArray(answerList.toArray());    // do I need to add OK-code here?
                 try {
-                    response.setCharacterEncoding("UTF-8");
                     PrintWriter out = response.getWriter();
                     out.print(resultObj.toString());
                 } catch (IOException e) {

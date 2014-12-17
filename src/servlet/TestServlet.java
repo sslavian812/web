@@ -21,6 +21,8 @@ public class TestServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletOutputStream out = response.getOutputStream();
         out.println("Path: " + request.getPathInfo());
+        response.addHeader("Access-Control-Allow-Origin", "*");
+
         out.println(request.getCookies().length + " cookies");
         for (Cookie c : request.getCookies()) {
             out.println(c.getName() + " = " + c.getValue());

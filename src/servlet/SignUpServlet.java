@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -44,6 +45,8 @@ public class SignUpServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter(PARAM_USERNAME);
         String password = request.getParameter(PARAM_PASSWORD);
+        response.addHeader("Access-Control-Allow-Origin", "*");
+
         if (username == null || username.length() == 0
                 || password == null || password.length() == 0) {
             writeResult(ERR_CODE_BAD_REQUEST, response);
@@ -72,7 +75,11 @@ public class SignUpServlet extends HttpServlet {
                 return;
             }
             response.addCookie(new Cookie(COOKIE_AUTH, cookie));
-            writeResult(CODE_OK, response);
+            Map<String, Object> data = new HashMap<>();
+            data.put("code", CODE_OK);
+            data.put("username", username);
+            data.put("token", cookie);
+            response.getWriter().print(new JSONObject(data));
         }
     }
 

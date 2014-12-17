@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Sergey on 14.12.2014.
@@ -40,8 +41,27 @@ public class SignInServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        response.addHeader("Access-Control-Allow-Origin", "*");
+
         if (username == null || username.length() == 0
                 || password == null || password.length() == 0) {
+
+            Cookie[] cookies = request.getCookies();
+            for (Cookie c : cookies) {
+                if (CookieManager.COOKIE_AUTH.equals(c.getName())) {
+                    User u = CookieManager.validateCookie(c.getValue());
+                    if (u != null) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("code", CODE_HANDSHAKE);
+                        data.put("username", u.login);
+                        data.put("token", c.getValue());
+                        response.getWriter().print(new JSONObject(data));
+                        return;
+                    }
+                    break;
+                }
+            }
+
             writeResult(ERR_CODE_BAD_REQUEST, response);
             return;
         }
@@ -70,10 +90,15 @@ public class SignInServlet extends HttpServlet {
             return;
         }
         response.addCookie(new Cookie(COOKIE_AUTH, cookie));
-        writeResult(CODE_OK, response);
+        Map<String, Object> data = new HashMap<>();
+        data.put("code", CODE_OK);
+        data.put("username", username);
+        data.put("token", cookie);
+        response.getWriter().print(new JSONObject(data));
     }
 
     public static final int CODE_OK = 100;
+    public static final int CODE_HANDSHAKE = 101;
     public static final int ERR_CODE_BAD_REQUEST = 300;
     public static final int ERR_CODE_DENIED = 301;
     public static final int ERR_INTERNAL = 302;
