@@ -1,44 +1,47 @@
 web
 ===
 
-короче сюда добавляем полезные ссылки.
+Сервер работает на java и servlet'ах
 
-сервер работает на java и servlet'ах
+База данных - SQLite, расположение:
 
-база данных - SQLite, расположение
 {путь, где лежит бинарник Tomcat}/db/ss.s3db
+
+Для её работы нужен SQLite JDBC -- https://bitbucket.org/xerial/sqlite-jdbc,
+см. последний абзац.
 
 API:
 ===
-/signup?username=u&password=p
-	100 -- OK, see cookies
-	300 -- bad request
-	301 -- username already exists
-	302 -- internal error
+    /signup?username=u&password=p
+    100 -- OK, see cookies
+    300 -- bad request
+    301 -- username already exists
+    302 -- internal error
 
-/signin?username=u&password=password
+	/signin?username=u&password=password
 	100 -- OK, see cookies
 	300 -- bad request
 	301 -- access denied
 	302 -- internal error
 
-/do?object=list&action=get
-	получить все списки слов
+	/do?object=list&action=get
+	-- получить все списки слов
+	Пример ответа: ["history", "favorites", "lyrics"]
 
-/do?object=list&action=add&list=name
+	/do?object=list&action=add&list=name
 	создать список с именем name
 
-/do?object=list&action=delete&list=name
+	/do?object=list&action=delete&list=name
 	удалить список с именем name
 
-/do?object=word&action=get&list=name
+	/do?object=word&action=get&list=name
 	получить все слова из списка юзера
 
-/do?object=word&actionadd=&list=name&word=word
+	/do?object=word&actionadd=&list=name&word=word
 	добавить слово word в список (слово уже должно содержаться в базе, например в списке history у даного юзера)
 
-/do?object=word&action=delete&list=name&word=word
-		удалить слово word из списка name у текущего юзера
+	/do?object=word&action=delete&list=name&word=word
+	удалить слово word из списка name у текущего юзера
 
-/do?object=word&action=delete&list=*&word=word
+	/do?object=word&action=delete&list=*&word=word
 	удалить слово word из всех списков юзера
