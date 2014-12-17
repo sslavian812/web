@@ -154,7 +154,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static User getUserByLogin(String login) throws SQLException {
-        return getUserWhere("login='"+login+"'");
+        return getUserWhere("login='" + login + "'");
     }
 
     /**
@@ -166,7 +166,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static User getUserByCredentials(String login, String password) throws SQLException {
-        return getUserWhere("login='"+login +"' AND password='"+password+"'");
+        return getUserWhere("login='" + login + "' AND password='" + password + "'");
     }
 
 
@@ -179,7 +179,7 @@ public class DBAdapter {
      */
     private static User getUserWhere(String where) throws SQLException {
         resultSet = statement.executeQuery("SELECT * FROM users " +
-                "WHERE " + where +";");
+                "WHERE " + where + ";");
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String lg = resultSet.getString("login");
@@ -192,6 +192,7 @@ public class DBAdapter {
 
     /**
      * Get a user with the corresponding auth cookie or null if there's no such user.
+     *
      * @param authCookie auth cookie to choose the user by
      * @return User object or null if no user is found
      * @throws SQLException
@@ -202,7 +203,7 @@ public class DBAdapter {
         );
         if (resultSet.first()) {
             long id = resultSet.getLong("user_id");
-            User result = getUserWhere("id="+id);
+            User result = getUserWhere("id=" + id);
             return result;
         }
         return null;
@@ -265,12 +266,13 @@ public class DBAdapter {
     /**
      * deletes specified list and all the bindings between it and words.
      * words itself are leaving in the database even when no list contains it.
+     *
      * @param list_id
      * @throws SQLException
      */
-    public static void deleteList(int list_id) throws SQLException{
-        statement.execute("DELETE FROM 'lists' WHERE id = '" + list_id  + "'); ");
-        statement.execute("DELETE FROM 'words_in_lists' WHERE list_id = '" + list_id  + "'); ");
+    public static void deleteList(int list_id) throws SQLException {
+        statement.execute("DELETE FROM 'lists' WHERE id = '" + list_id + "'); ");
+        statement.execute("DELETE FROM 'words_in_lists' WHERE list_id = '" + list_id + "'); ");
     }
 
     /**
@@ -292,6 +294,18 @@ public class DBAdapter {
         statement.execute("INSERT INTO 'words_in_lists' ('list_id', 'word_id') " +
                 "VALUES ('" + list_id + "' , '" + word_id + "');");
 
+    }
+
+    /**
+     * inserts a word to words and associated it with specified list
+     *
+     * @param list_id
+     * @param word_id
+     * @throws SQLException
+     */
+    public static void addWordToList(int list_id, int word_id) throws SQLException {
+        statement.execute("INSERT INTO 'words_in_lists' ('list_id', 'word_id') " +
+                "VALUES ('" + list_id + "' , '" + word_id + "');");
     }
 
     /**
@@ -332,12 +346,25 @@ public class DBAdapter {
 
     /**
      * deletes the words from database and destroys all the binding it to every list
+     *
      * @param word_id
      * @throws SQLException
      */
     public static void deleteWord(int word_id) throws SQLException {
-        statement.execute("DELETE FROM 'words' WHERE id = '" + word_id  + "'); ");
-        statement.execute("DELETE FROM 'words_in_lists' WHERE word_id = '" + word_id  + "'); ");
+        statement.execute("DELETE FROM 'words' WHERE id = '" + word_id + "'); ");
+        statement.execute("DELETE FROM 'words_in_lists' WHERE word_id = '" + word_id + "'); ");
+    }
+
+    /**
+     * deletes the words from database and destroys all the binding it to every list
+     *
+     * @param word_id
+     * @param list_id
+     * @throws SQLException
+     */
+    public static void deleteWordFromList(int word_id, int list_id) throws SQLException
+    {
+        statement.execute("DELETE FROM 'words_in_lists' WHERE list_id = '" + list_id + "' AND word_id = '" + word_id + "'); ");
     }
 
     /**
@@ -401,11 +428,12 @@ public class DBAdapter {
 
     /**
      * deletes a cookie associated with specifies user.
+     *
      * @param user_id
      * @throws SQLException
      */
     public static void deleteCookie(int user_id) throws SQLException {
-        statement.execute("DELETE FROM 'cookies' WHERE user_id = '" + user_id  + "'); ");
+        statement.execute("DELETE FROM 'cookies' WHERE user_id = '" + user_id + "'); ");
     }
 
     /**

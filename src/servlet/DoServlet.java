@@ -1,5 +1,6 @@
 package servlet;
 
+import cookie.CookieManager;
 import db.DBAdapter;
 import db.User;
 import db.Word;
@@ -40,32 +41,17 @@ public class DoServlet extends HttpServlet {
 
 
     int authenticateUser(HttpServletRequest request) {
-        String auth = null;
+        User user = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName() == COOKIE_AUTH)
-                auth = cookie.getValue();
+                user = CookieManager.validateCookie(cookie.getValue());
         }
 
-        if (auth == null)
+        if (user == null)
             return -1;
-
-        try {
-            DBAdapter.connect();
-            User user = DBAdapter.getUserByAuthCookie(auth);
-            if (user == null)
-                return -1;
-            else
-                return user.id;
-
-        } catch (SQLException | ClassNotFoundException e) {
-            return -1;
-        } finally {
-            try {
-                DBAdapter.close();
-            } catch (SQLException | ClassNotFoundException e) {
-            }
-        }
+        else
+            return user.id;
     }
 
     //    _list/add/list
@@ -115,18 +101,16 @@ public class DoServlet extends HttpServlet {
                     return;
                 }
 
-            } catch (SQLException | ClassNotFoundException e) {
+            } catch (SQLException e) {
                 writeResult(ERR_INTERNAL, response);
                 return;
             } finally {
-                try {
-                    DBAdapter.close();
-                } catch (SQLException | ClassNotFoundException e) {
-                }
+
+                DBAdapter.close();
+
             }
             writeResult(CODE_OK, response);
-        }else if("word".equals(obj))
-        {
+        } else if ("word".equals(obj)) {
             //add or remove words
             if (word == null || word.length() == 0) {
                 writeResult(ERR_CODE_BAD_REQUEST, response);
@@ -137,32 +121,33 @@ public class DoServlet extends HttpServlet {
 
                 int list_id = DBAdapter.getListId(id, list_name);
                 int word_id = DBAdapter.getWordID(word);
-                if(list_id == -1 || word_id == -1)
-                {
+                if (!"*".equals(list_name) && (list_id == -1 || word_id == -1)) {
                     writeResult(ERR_CODE_BAD_REQUEST, response);
                     return;
                 }
 
                 if (ACTION_ADD.equals(action)) {
-                    DBAdapter.addWord(list_id, word_id); // todo: add method to DB Interface
+                    DBAdapter.addWordToList(word_id, list_id); // todo: add method to DB Interface
                 } else if (ACTION_DELETE.equals(action)) {
-                    DBAdapter.deleteWord(word_id);
+                    if ("*".equals(list_name)) {
+                        List<WordsList> lists = DBAdapter.getAllListsFromUser(id);
+                        for (WordsList wl : lists) {
+                            DBAdapter.deleteWordFromList(word_id, wl.id); // todo: add method to DB Interface
+                        }
+                    }
+                    DBAdapter.deleteWordFromList(word_id, list_id);
                 } else {
                     writeResult(ERR_CODE_BAD_REQUEST, response);
                     return;
                 }
 
-            } catch (SQLException | ClassNotFoundException e) {
+            } catch (SQLException e) {
                 writeResult(ERR_INTERNAL, response);
                 return;
             } finally {
-                try {
-                    DBAdapter.close();
-                } catch (SQLException | ClassNotFoundException e) {
-                }
+                DBAdapter.close();
             }
             writeResult(CODE_OK, response);
-
         }
     }
 
@@ -209,14 +194,11 @@ public class DoServlet extends HttpServlet {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } catch (SQLException | ClassNotFoundException e) {
+            } catch (SQLException e) {
                 writeResult(ERR_INTERNAL, response);
                 return;
             } finally {
-                try {
-                    DBAdapter.close();
-                } catch (SQLException | ClassNotFoundException e) {
-                }
+                DBAdapter.close();
             }
             return;
         }
@@ -244,12 +226,9 @@ public class DoServlet extends HttpServlet {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                try {
-                    DBAdapter.close();
-                } catch (SQLException | ClassNotFoundException e) {
-                }
+                DBAdapter.close();
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             writeResult(ERR_INTERNAL, response);
             return;
         }
