@@ -91,7 +91,7 @@ public class DoServlet extends HttpServlet {
 
                 if (ACTION_ADD.equals(action) && list_id == -1) {
                     DBAdapter.addList(id, list_name);
-                } else if (ACTION_DELETE.equals(action) && list_id != -1) {
+                } else if (ACTION_DELETE.equals(action) && list_id != -1 && !"history".equals(list_name)) {
                     DBAdapter.deleteList(list_id);
                 } else {
                     writeResult(ERR_CODE_BAD_REQUEST, response);
