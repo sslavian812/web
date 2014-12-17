@@ -45,3 +45,7 @@ API:
 
 	/do?object=word&action=delete&list=*&word=word
 	удалить слово word из всех списков юзера
+
+
+	/translate?word=word
+	перевести слово(текст) word. если юзер залогинен - слово добавится в его список history.
