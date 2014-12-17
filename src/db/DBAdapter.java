@@ -2,6 +2,10 @@ package db; /**
  * Created by viacheslav on 13.12.14.
  */
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -26,17 +30,25 @@ public class DBAdapter {
 
     /**
      * connects to DB
-     *
-     * @throws ClassNotFoundException
-     * @throws SQLException
      */
-    public static void connect() throws ClassNotFoundException, SQLException {
+    public static boolean connect() {
         connection = null;
-        Class.forName("org.sqlite.JDBC");
-        connection = DriverManager.getConnection("jdbc:sqlite:ss.s3db");
-        statement = connection.createStatement();
-
-        System.out.println("data base connected successfully!");
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:db/ss.s3db");
+            statement = connection.createStatement();
+            createTables();
+            System.out.println("data base connected successfully!");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -82,15 +94,19 @@ public class DBAdapter {
     /**
      * closes the database
      *
-     * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public static void close() throws ClassNotFoundException, SQLException {
-        resultSet.close();
-        statement.close();
-        connection.close();
-
-        System.out.println("Database closed");
+    public static boolean close() {
+        try {
+            resultSet.close();
+            statement.close();
+            connection.close();
+            System.out.println("Database closed");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -138,7 +154,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static User getUserByLogin(String login) throws SQLException {
-        return getUserWhere("login="+login);
+        return getUserWhere("login='"+login+"'");
     }
 
     /**
@@ -150,7 +166,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static User getUserByCredentials(String login, String password) throws SQLException {
-        return getUserWhere("login="+login +" AND password="+password);
+        return getUserWhere("login='"+login +"' AND password='"+password+"'");
     }
 
 
@@ -164,7 +180,7 @@ public class DBAdapter {
     private static User getUserWhere(String where) throws SQLException {
         resultSet = statement.executeQuery("SELECT * FROM users " +
                 "WHERE " + where +";");
-        while (resultSet.first()) {
+        while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String lg = resultSet.getString("login");
             String pw = resultSet.getString("password");

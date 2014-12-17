@@ -52,12 +52,13 @@ public class SignUpServlet extends HttpServlet {
         try {
             DBAdapter.connect();
             User existingUser = DBAdapter.getUserByLogin(username);
-            id = DBAdapter.addUser(username, password);
             if (existingUser != null) {
                 writeResult(ERR_CODE_USERNAME_NOT_UNIQUE, response);
                 return;
             }
-        } catch (SQLException | ClassNotFoundException e) {
+            id = DBAdapter.addUser(username, password);
+            DBAdapter.close();
+        } catch (SQLException e) {
             writeResult(ERR_INTERNAL, response);
             return;
         }
