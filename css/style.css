@@ -140,6 +140,7 @@ span {
 	margin-right: 0px;
 	margin-bottom: 10px;
 	margin-left: 10px;
+	visibility: hidden;
 }
 .dict_name    {
 	background-color: #FFF;
@@ -154,7 +155,7 @@ span {
 #dict .active   {
 	background-color: #CCC;
 }
-#new_dict    {
+#dict    #new_dict{
 	font-size: medium;
 	padding-right: 5px;
 	padding-bottom: 5px;
@@ -166,7 +167,7 @@ span {
 	margin-right: 0px;
 	margin-left: 5px;
 }
-#add_dict    {
+#dict    #add_dict{
 	height: 32px;
 	width: 32px;
 	margin-top: 11px;
@@ -174,7 +175,7 @@ span {
 	margin-bottom: 4px;
 	margin-left: 4px;
 }
-.dict_list    {
+#dict_list    {
 	overflow: scroll;
 	height: 457px;
 }
@@ -190,6 +191,7 @@ span {
 	margin-bottom: 10px;
 	margin-left: 0px;
 	overflow: scroll;
+	visibility: hidden;
 }
 #word_list .dict_element   {
 	border-bottom-width: 1px;
@@ -259,6 +261,7 @@ span {
 #add_to_dict {
 	background-color: #78909c;
 	color: #f7fdfd;
+	visibility: hidden;
 }
 #add_to_dict_window {
 	display: none;
