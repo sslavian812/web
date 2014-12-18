@@ -9,12 +9,7 @@
 body {
 	font-family: 'Roboto', sans-serif;
 	background-color: #D6D6D6;
-	  -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
-      -webkit-touch-callout: none;
+
 }
 .main .header {
 	background-color: #78909C;
@@ -32,7 +27,21 @@ body {
 	padding-left: 20px;
 	float: left;
 }
+.main .header #username {
+	float: right;
+	font-size: large;
+	padding: 18px;
+	display: none;
+
+}
+
 .button {
+	-webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-touch-callout: none;
 	display: inline-block;
 	position: relative;
 	width: 120px;
@@ -73,69 +82,293 @@ span {
 	word-wrap: break-word;
 	display: block;
 }
-.body #word_section .word .pos {
+.main .body {
+	overflow: auto;
+}
+#main_section   {
+	width: 521px;
+	float: left;
+	overflow: auto;
+	margin-top: 10px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+#original_word    {
+	font-size: large;
+	padding: 10px;
+	width: 420px;
+	float: left;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	margin-right: 0px;
+}
+#translate    {
+	display: inline-block;
+	position: relative;
+	line-height: 32px;
+	border-radius: 2px;
+	font-size: 0.9em;
+	background-color: #f7fdfd;
+	color: #78909c;
+	font-variant: normal;
+	width: 36px;
+	height: 36px;
+	float: right;
+	padding-top: 4px;
+	padding-right: 14px;
+	padding-bottom: 4px;
+	padding-left: 14px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+#translate:hover {
+	box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2);
+	transition-delay: 0s;
+}
+#dict   {
+	clear: both;
+	float: left;
+	height: 515px;
+	width: 250px;
+	border: 1px solid #CCC;
+	padding: 0px;
+	margin-top: 10px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+.dict_name    {
+	background-color: #FFF;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCC;
+	padding: 5px;
+}
+#dict #add_dict img   {
+	padding: 4px;
+}
+#dict .active   {
+	background-color: #CCC;
+}
+#new_dict    {
+	font-size: medium;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	padding-left: 15px;
+	width: 180px;
+	padding-top: 5px;
+	float: left;
+	margin-top: 11px;
+	margin-right: 0px;
+	margin-left: 5px;
+}
+#add_dict    {
+	height: 32px;
+	width: 32px;
+	margin-top: 11px;
+	margin-right: 4px;
+	margin-bottom: 4px;
+	margin-left: 4px;
+}
+.dict_list    {
+	overflow: scroll;
+	height: 457px;
+}
+#word_list   {
+	clear: right;
+	float: right;
+	height: 515px;
+	width: 250px;
+	border: 1px solid #CCC;
+	padding: 0px;
+	margin-top: 10px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	margin-left: 0px;
+	overflow: scroll;
+}
+#word_list .dict_element   {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #999;
+	padding-top: 5px;
+	padding-right: 15px;
+	padding-bottom: 5px;
+	padding-left: 15px;
+}
+#word_section   {
+	width: 450px;
+	border: 1px solid #CCC;
+	height: 591px;
+	float: right;
+	margin-top: 9px;
+	margin-right: 9px;
+	margin-bottom: 9px;
+	margin-left: 0px;
+}
+#word_article   {
+	overflow: scroll;
+	height: 530px;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: #CCC;
+}
+
+#word_article .word .pos  {
 	color: #a6a6a6;
 }
-.body #word_section .word .tran .tran_text {
+#word_article .word .tran .tran_text  {
 	color: #313131;
 }
-.body #word_section .word .tran .tran_mean {
+#word_article .word .tran .tran_mean  {
 	color: #a8a8a8;
 }
-.body #word_section .word {
+#word_article .word  {
 	margin: 10px;
 	padding: 10px;
 	border: 1px solid #CCC;
 }
-.body #word_section .word .tran .ex {
+#word_article .word .tran .ex {
 	padding-top: 0px;
 	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 20px;
 }
-.body #word_section .word .tran {
+#word_article .word .tran  {
 	padding-top: 5px;
 	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
-.body #word_section .original .original_text {
+#word_article .original .original_text  {
 	color: #1d1d1d;
 	font-size: x-large;
 }
-.body #word_section .original {
+#word_article .original  {
 	margin: 10px;
 	padding: 10px;
 	border: 1px solid #CCC;
 }
-
-
-
-
-
-.body #word_section .word .tran .ex .tran_ex {
+#word_article .word .tran .ex .tran_ex  {
 	color: #0664a2;
 }
-
-
-
-
-
-
-.center {
-      text-align: center;
+#add_to_dict {
+	background-color: #78909c;
+	color: #f7fdfd;
+}
+#add_to_dict_window {
+	display: none;
+	background: #fff;
+	border: 1px solid rgb(102,102,102);
+	float: left;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	color: #000;
+	height: 500;
+	z-index: 99999;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+#add_to_dict_window .dict_list {
+	height: 360px;
+}
+.alert {
+	color: #900;
+	padding-left: 38px;
+	margin: 4px;
+	visibility: hidden;
 }
 
-#fade {
+
+
+#sign_up_window {
 	display: none;
+	background: #fff;
+	border: 1px solid rgb(102,102,102);
+	float: left;
+	font-size: 85%;
 	position: fixed;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	opacity: .80;
-	z-index: 9999;
+	top: 50%;
+	left: 50%;
+	color: #000;
+	height: 500;
+	z-index: 99999;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+#sign_up_window input {
+	height: 32px;
+	margin: 0px;
+	font-size: large;
+	padding: 8px;
+	border: 1px solid #CCC;
+	width: 282px;
+}
+#sign_up_window #sub_sign_up {
+	background-color: #78909c;
+	float: right;
+	color: #f7fdfd;
+	margin-top: 0px;
+	margin-right: 30px;
+	margin-bottom: 0px;
+	margin-left: 30px;
+}
+#sign_up_window .header p {
+	font-size: x-large;
+	margin: 0px;
+	padding: 10px;
+	color: #f7fdfd;
+	float: left;
+	font-weight: lighter;
+}
+#sign_up_window #su_login{
+	margin-top: 30px;
+	margin-right: 30px;
+	margin-bottom: 0px;
+	margin-left: 30px;
+}
+#sign_up_window #su_password{
+	margin-right: 30px;
+	margin-left: 30px;
+	margin-bottom: 0px;
+	margin-top: 5px;
+}
+#sign_up_window #sur_password{
+	margin-top: 30px;
+	margin-right: 30px;
+	margin-bottom: 0px;
+	margin-left: 30px;
+}
+
+
+
+#sign_up_window .header {
 	background-color: #78909C;
+	overflow: auto;
+}
+
+#sign_in_window .input_section {
+	padding: 0px;
+	margin: 30px;
+}
+#sign_in_window .header p {
+	font-size: x-large;
+	margin: 0px;
+	padding: 10px;
+	color: #f7fdfd;
+	float: left;
+	font-weight: lighter;
+}
+#sign_in_window .header {
+	background-color: #78909C;
+	overflow: auto;
 }
 #sign_in_window {
 	display: none;
@@ -164,168 +397,19 @@ span {
 #sign_in_window #sub_sign_in {
 	background-color: #78909c;
 	float: right;
-	margin: 30px;
 	color: #f7fdfd;
-}
-.main .body #main_section {
-	width: 521px;
-	float: left;
-	overflow: auto;
-	margin-top: 10px;
-	margin-right: 0px;
-	margin-bottom: 10px;
-	margin-left: 10px;
-}
-.main .body #main_section #original_word {
-	font-size: large;
-	padding: 10px;
-	width: 420px;
-	float: left;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	margin-left: 10px;
-	margin-right: 0px;
-}
-.main .body #main_section #translate {
-	display: inline-block;
-	position: relative;
-	line-height: 32px;
-	border-radius: 2px;
-	font-size: 0.9em;
-	background-color: #f7fdfd;
-	color: #78909c;
-	font-variant: normal;
-	width: 36px;
-	height: 36px;
-	float: right;
-	padding-top: 4px;
-	padding-right: 14px;
-	padding-bottom: 4px;
-	padding-left: 14px;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	margin-left: 0px;
-	margin-right: 0px;
-}
-
-.main .body #main_section #translate:hover {
-	box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2);
-	transition-delay: 0s;
-}
-.body #main_section #dict_list {
-	clear: both;
-	float: left;
-	height: 515px;
-	width: 250px;
-	border: 1px solid #CCC;
-	padding: 0px;
-	margin-top: 10px;
-	margin-right: 0px;
-	margin-bottom: 10px;
-	margin-left: 10px;
-}
-.body #main_section #word_list {
-	clear: right;
-	float: right;
-	height: 515px;
-	width: 250px;
-	border: 1px solid #CCC;
-	padding: 0px;
-	margin-top: 10px;
-	margin-right: 0px;
-	margin-bottom: 10px;
-	margin-left: 0px;
-}
-
-
-
-.main .body #word_section {
-	width: 450px;
-	border: 1px solid #CCC;
-	height: 591px;
-	float: right;
-	margin-top: 9px;
-	margin-right: 9px;
-	margin-bottom: 9px;
-	margin-left: 0px;
-	overflow: scroll;
-}
-.main .body {
-	overflow: auto;
-}
-
-#sign_in_window .input_section {
-	padding: 0px;
-	margin: 30px;
-}
-#sign_in_window .header p {
-	font-size: x-large;
-	margin: 0px;
-	padding: 10px;
-	color: #f7fdfd;
-	float: left;
-	font-weight: lighter;
-}
-#sign_in_window .header {
-	background-color: #78909C;
-	overflow: auto;
-}
-
-#sign_up_window {
-	display: none;
-	background: #fff;
-	border: 1px solid rgb(102,102,102);
-	float: left;
-	font-size: 85%;
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	color: #000;
-	height: 500;
-	z-index: 99999;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
-}
-#sign_up_window .input_section input{
-	height: 32px;
-	margin: 0px;
-	font-size: large;
-	padding: 8px;
-	border: 1px solid #CCC;
-	width: 282px;
-}
-#sign_up_window #sub_sign_up {
-	background-color: #78909c;
-	float: right;
-	color: #f7fdfd;
-	margin-top: 0px;
 	margin-right: 30px;
-	margin-bottom: 0px;
+	margin-bottom: 30px;
 	margin-left: 30px;
-}
-
-#sign_up_window .input_section {
-	padding: 0px;
-	margin-top: 25px;
-	margin-right: 30px;
-	margin-bottom: 25px;
-	margin-left: 30px;
-}
-#sign_up_window .header p {
-	font-size: x-large;
-	margin: 0px;
-	padding: 10px;
-	color: #f7fdfd;
-	float: left;
-	font-weight: lighter;
-}
-#sign_up_window .header {
-	background-color: #78909C;
-	overflow: auto;
 }
 /*--фиксированное позиционирование для IE6--*/
-*html #fade {
+*html #fade_u {
+    position: absolute;
+}
+*html #fade_p {
+    position: absolute;
+}
+*html #fade_d {
     position: absolute;
 }
 *html #sign_in_window {
@@ -336,16 +420,14 @@ span {
     position: absolute;
 }
 
- .icon-button {
+.icon-button {
 	position: relative;
 	display: inline-block;
 	width: 56px;
 	height: 56px;
 	float: right;
-    }
-
-
-   
+}
+ 
 .icon-button > core-icon {
 	margin: 16px;
 	color: #f7fdfd;
@@ -361,4 +443,20 @@ span {
 .icon-button > paper-ripple {
 	overflow: hidden;
 	color: #646464;
+}
+
+.center {
+      text-align: center;
+}
+
+.fade {
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	opacity: .80;
+	z-index: 9999;
+	background-color: #78909C;
 }
