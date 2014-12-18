@@ -47,20 +47,21 @@ public class SignInServlet extends HttpServlet {
                 || password == null || password.length() == 0) {
 
             Cookie[] cookies = request.getCookies();
-            for (Cookie c : cookies) {
-                if (CookieManager.COOKIE_AUTH.equals(c.getName())) {
-                    User u = CookieManager.validateCookie(c.getValue());
-                    if (u != null) {
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("code", CODE_HANDSHAKE);
-                        data.put("username", u.login);
-                        data.put("token", c.getValue());
-                        response.getWriter().print(new JSONObject(data));
-                        return;
+            if (cookies != null)
+                for (Cookie c : cookies) {
+                    if (CookieManager.COOKIE_AUTH.equals(c.getName())) {
+                        User u = CookieManager.validateCookie(c.getValue());
+                        if (u != null) {
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("code", CODE_HANDSHAKE);
+                            data.put("username", u.login);
+                            data.put("token", c.getValue());
+                            response.getWriter().print(new JSONObject(data));
+                            return;
+                        }
+                        break;
                     }
-                    break;
                 }
-            }
 
             writeResult(ERR_CODE_BAD_REQUEST, response);
             return;

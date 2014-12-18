@@ -30,33 +30,23 @@
         <div class="body">
 			<div id="main_section">
         		<input id="original_word" type="text" placeholder="Word"/> 
-                <div class="button" id="translate">
+              	<div class="button" id="translate">
                 	<img alt="Translate" src="img/translate.png"> 
                     <paper-ripple fit></paper-ripple>
                 </div>
-                <div id="dict">
+             	 <div id="dict">
 					<input id="new_dict" type="text" placeholder="New dictionary"/>
-					<div class="button" id="add_dict">
+			    	<div class="button" id="add_dict">
                     	<img alt="Add dictionary" src="img/add_dict.png">
                     	<paper-ripple fit></paper-ripple>
                 	</div>           
-                  	<span class="dict_name"></span>                
-                  	<div class="dict_list">
-                   	  	<span class="dict_name center active">History</span>
-                    	<span class="dict_name center">First</span>
-                    	<span class="dict_name center">Second</span>
-				  	</div>
+           	    	<span class="dict_name"></span>                
+           	    	<div id="dict_list"></div>
 			  	</div>
-			  	<div id="word_list">
-               		<span class="dict_element">first<font color="#99c1b9"> - первый</font></span>
-                    	<span class="dict_element">second<font color="#99c1b9"> - второй</font></span>
-                          	<span class="dict_element">first<font color="#99c1b9"> - первый</font></span>
-
-                              
-				</div>
+			  	<div id="word_list"></div>
 			</div>
 			<div id="word_section">
-                <div class="button" id="add_to_dict">  	   	
+              <div class="button" id="add_to_dict">  	   	
       				<div class="center" fit>ADD</div>
       				<paper-ripple fit></paper-ripple>
     			</div>
@@ -68,10 +58,9 @@
         	<div class="footer"></div>
 		</div>
     <div id="add_to_dict_window">
- 	<div class="dict_list">
-                    	<span class="dict_name center">First</span>
-                    	<span class="dict_name center">Second</span>
-				  	</div>
+ 		<div id="dict_list">
+
+		</div>
 	</div>
 	<div id="sign_in_window">
 		<div class="header">
@@ -87,7 +76,7 @@
 		<div class="input_section">
         	<input id="si_password" type="password" placeholder="Password"/>
 		</div>
-        <span class="alert" id="incorrect">Incorrect username or password.</span>
+      <span class="alert" id="incorrect">Incorrect username or password.</span>
 		<div class="button" id="sub_sign_in">  	   	
 			<div class="center" fit>SIGN IN</div>
    			<paper-ripple fit></paper-ripple>
@@ -101,17 +90,17 @@
 				<paper-ripple class="circle recenteringTouch" fit></paper-ripple>
 			</div>
 		</div>  
-		<input id="su_login" type="text" placeholder="Username"/>            	
-      	<span class="alert" id="username_alert">A</span>
-        <input id="su_password" type="password" placeholder="Password"/>
+	  <input id="su_login" type="text" placeholder="Username"/>            	
+   	  <span class="alert" id="username_alert">A</span>
+      <input id="su_password" type="password" placeholder="Password"/>
 		<input id="sur_password" type="password" placeholder="Repeat password"/>
 		<span class="alert" id="pass_dont_match">A</span>
-	  	<div class="button" id="sub_sign_up">  	   	
+  	  <div class="button" id="sub_sign_up">  	   	
    			<div class="center" fit>SIGN UP</div>
    			<paper-ripple fit></paper-ripple>
    		</div>
 	</div>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
-	<script src="js/index.js"></script>
+<script src="js/index.js"></script>
 </body>
 </html>
