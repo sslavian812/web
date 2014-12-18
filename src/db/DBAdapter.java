@@ -6,11 +6,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +86,13 @@ public class DBAdapter {
                 "FOREIGN KEY (list_id) REFERENCES lists(list_id), " +
                 "FOREIGN KEY (word_id) REFERENCES words(word_id));");
 
+        statement.execute("CREATE TABLE if not exists 'tokens' " +
+                "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "'user_id' INTEGER, " +
+                "'token' text unique, " +
+                "'expires' INTEGER " +
+                "FOREIGN KEY(user_id) REFERENCES users(id));");
+
         System.out.println("tables already exist or were successfully created!");
     }
 
@@ -123,11 +126,53 @@ public class DBAdapter {
         statement.execute("DROP TABLE if exists 'lists';");
         statement.execute("DROP TABLE if exists 'words_in_lists';");
         statement.execute("DROP TABLE if exists 'cookies';");
+        statement.execute("DROP TABLE if exists 'tokens';");
         createTables();
         System.out.println("Database cleared");
     }
 
     //------------------------------------------------------------------------------------------------------------------
+
+    public static void setToken(int user_id, String value, long unix_time) throws SQLException
+    {
+        String pst ="INSERT INTO 'tokens' ('user_id', 'token', 'expires') VALUES ( ?, ?, ?); ";
+        PreparedStatement s = connection.prepareStatement(pst);
+        s.setInt(1, user_id);
+        s.setString(2, value);
+        s.setLong(3, unix_time);
+
+        s.execute();
+    }
+
+    public static void updateToken(int user_id, String value, long unix_time) throws SQLException
+    {
+        String pst ="UPDATE 'tokens' SET 'token'=?, 'expires'=? WHERE  'user_id'=?; ";
+        PreparedStatement s = connection.prepareStatement(pst);
+        s.setString(1, value);
+        s.setLong(2, unix_time);
+        s.setInt(3, user_id);
+
+        s.execute();
+    }
+
+    public static String getToken(int user_id, long curTime) throws SQLException
+    {
+        String pst ="SELECT  * FROM 'tokens' ('user_id', 'token', 'expires') WHERE 'user_id'=?;";
+        PreparedStatement s = connection.prepareStatement(pst);
+        s.setInt(1, user_id);
+        resultSet = s.getResultSet();
+
+        while (resultSet.next()) {
+            long time = resultSet.getLong("expires");
+            String value = resultSet.getString("token");
+            if(time + 60 < curTime)
+                return null;
+            else
+                return value;
+        }
+        return null;
+    }
+
 
     /**
      * add a user to database, creates default "history" list.
