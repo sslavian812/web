@@ -92,7 +92,7 @@ public class DBAdapter {
                 "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "'user_id' INTEGER, " +
                 "'token' text unique, " +
-                "'expires' INTEGER " +
+                "'expires' INTEGER, " +
                 "FOREIGN KEY(user_id) REFERENCES users(id));");
 
         System.out.println("tables already exist or were successfully created!");
