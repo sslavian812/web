@@ -7,8 +7,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -105,9 +104,12 @@ public class DBAdapter {
      */
     public static boolean close() {
         try {
-            resultSet.close();
-            statement.close();
-            connection.close();
+            if (resultSet != null)
+                resultSet.close();
+            if (statement != null)
+                statement.close();
+            if (connection != null)
+                connection.close();
             System.out.println("Database closed");
             connection = null;
             return true;
@@ -137,7 +139,7 @@ public class DBAdapter {
 
     public static void setToken(int user_id, String value, long unix_time) throws SQLException
     {
-        String pst ="INSERT INTO 'tokens' ('user_id', 'token', 'expires') VALUES ( ?, ?, ?); ";
+        String pst ="INSERT INTO 'tokens' ('user_id', 'token', 'expires') VALUES ( ?, ?, ?)";
         PreparedStatement s = connection.prepareStatement(pst);
         s.setInt(1, user_id);
         s.setString(2, value);
@@ -148,7 +150,7 @@ public class DBAdapter {
 
     public static void updateToken(int user_id, String value, long unix_time) throws SQLException
     {
-        String pst ="UPDATE 'tokens' SET 'token'=?, 'expires'=? WHERE  'user_id'=?; ";
+        String pst ="UPDATE 'tokens' SET 'token'=?, 'expires'=? WHERE  'user_id'=?";
         PreparedStatement s = connection.prepareStatement(pst);
         s.setString(1, value);
         s.setLong(2, unix_time);
@@ -159,7 +161,7 @@ public class DBAdapter {
 
     public static String getToken(int user_id, long curTime) throws SQLException
     {
-        String pst ="SELECT  * FROM 'tokens' ('user_id', 'token', 'expires') WHERE 'user_id'=?;";
+        String pst ="SELECT  * FROM 'tokens' ('user_id', 'token', 'expires') WHERE 'user_id'=?";
         PreparedStatement s = connection.prepareStatement(pst);
         s.setInt(1, user_id);
         resultSet = s.getResultSet();
@@ -276,29 +278,6 @@ public class DBAdapter {
     }
 
     /**
-     * Gets the first user which meets given SQL WHERE-statement
-     *
-     * @param where SQL WHERE statement
-     * @return User object or null if there's no such user
-     * @throws SQLException
-     */
-    /*private static User getUserWhere(String where) throws SQLException {
-        String sql = "SELECT * FROM users WHERE ?";
-        PreparedStatement s = connection.prepareStatement(sql);
-        s.setString(1, where);
-        resultSet = s.executeQuery();
-        if (resultSet.next()) {
-            int id = resultSet.getInt("id");
-            String lg = resultSet.getString("login");
-            String pw = resultSet.getString("password");
-
-            return new User(id, lg, pw);
-        }
-        return null;
-    }*/
-
-
-    /**
      * adds list to usr by his id.
      *
      * @param user_id
@@ -349,9 +328,8 @@ public class DBAdapter {
             int id = resultSet.getInt("id");
             int uid = resultSet.getInt("user_id");
             String nm = resultSet.getString("name");
-            WordsList wordsList = new WordsList(id, uid, nm);
 
-            return wordsList;
+            return new WordsList(id, uid, nm);
         }
         return null;
     }
@@ -364,10 +342,10 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void deleteList(int list_id) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("DELETE FROM 'lists' WHERE id = ?");
+        PreparedStatement s = connection.prepareStatement("DELETE FROM 'lists' WHERE id=?");
         s.setLong(1, list_id);
         s.executeUpdate();
-        s = connection.prepareStatement("DELETE FROM 'words_in_lists' WHERE list_id = ?");
+        s = connection.prepareStatement("DELETE FROM 'words_in_lists' WHERE list_id=?");
         s.setLong(1, list_id);
         s.executeUpdate();
     }
@@ -407,7 +385,7 @@ public class DBAdapter {
      */
     public static void addWordToList(int list_id, int word_id) throws SQLException {
         PreparedStatement s = connection.prepareStatement(
-                "INSERT INTO 'words_in_lists' ('list_id', 'word_id') VALUES (?, ?");
+                "INSERT INTO 'words_in_lists' ('list_id', 'word_id') VALUES (?, ?)");
         s.setLong(1, list_id);
         s.setLong(2, word_id);
         s.executeUpdate();
@@ -455,7 +433,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void deleteWord(int word_id) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("DELETE FROM 'words' WHERE id = ?)");
+        PreparedStatement s = connection.prepareStatement("DELETE FROM 'words' WHERE id = ?");
         s.setLong(1, word_id);
         s.executeUpdate();
     }
@@ -470,7 +448,7 @@ public class DBAdapter {
     public static void deleteWordFromList(int word_id, int list_id) throws SQLException
     {
         PreparedStatement s = connection.prepareStatement(
-                "DELETE FROM 'words_in_lists' WHERE list_id = ? AND word_id = ?)");
+                "DELETE FROM 'words_in_lists' WHERE list_id = ? AND word_id = ?");
         s.setLong(1, list_id);
         s.setLong(2, word_id);
         s.executeUpdate();
@@ -529,6 +507,28 @@ public class DBAdapter {
         return list;
     }
 
+    public static List<WordsList> getListsForWord(long userId, long wordId, boolean listsIncludeWord) throws SQLException {
+        PreparedStatement s = connection.prepareStatement("SELECT list_id FROM words_in_lists WHERE word_id=?");
+        s.setLong(1, wordId);
+        resultSet = s.executeQuery();
+        Set<Long> listsWordIsIn  = new HashSet<>();
+        while (resultSet.next()) {
+            long id = resultSet.getLong("list_id");
+            if (!listsWordIsIn.contains(id))
+                listsWordIsIn.add(id);
+        }
+        s = connection.prepareStatement("SELECT * FROM lists WHERE user_id=?");
+        s.setLong(1, userId);
+        resultSet = s.executeQuery();
+        List<WordsList> answer = new ArrayList<>();
+        while (resultSet.next()) {
+            long id = resultSet.getLong("id");
+            if (!(listsWordIsIn.contains(id) ^ listsIncludeWord))
+                answer.add(new WordsList((int)id, (int)resultSet.getLong("user_id"), resultSet.getString("name")));
+        }
+        return answer;
+    }
+
     /**
      * associates a cookie-value with specified user
      *
@@ -550,7 +550,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void deleteCookie(int user_id) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("DELETE FROM 'cookies' WHERE user_id = ?)");
+        PreparedStatement s = connection.prepareStatement("DELETE FROM 'cookies' WHERE user_id = ?");
         s.setLong(1, user_id);
         s.executeUpdate();
     }

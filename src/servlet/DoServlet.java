@@ -2,7 +2,6 @@ package servlet;
 
 import cookie.CookieManager;
 import db.DBAdapter;
-import db.User;
 import db.Word;
 import db.WordsList;
 import org.json.JSONArray;
@@ -10,14 +9,17 @@ import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by Sergey on 14.12.2014.
@@ -29,6 +31,8 @@ public class DoServlet extends HttpServlet {
     public static final String PARAM_ACTION = "action";
     public static final String PARAM_LIST_NAME = "list";
     public static final String PARAM_WORD_NAME = "word";
+    public static final String PARAM_HAVE_WORD = "have_word";
+    public static final String PARAM_NOT_HAVE_WORD = "not_have_word";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_GET = "get";
@@ -83,14 +87,11 @@ public class DoServlet extends HttpServlet {
                     writeResult(ERR_CODE_BAD_REQUEST, response);
                     return;
                 }
-
             } catch (SQLException e) {
                 writeResult(ERR_INTERNAL, response);
                 return;
             } finally {
-
                 DBAdapter.close();
-
             }
             writeResult(CODE_OK, response);
         } else if ("word".equals(obj)) {
@@ -134,13 +135,14 @@ public class DoServlet extends HttpServlet {
         }
     }
 
-    //    _list/get/
-    //    _word/get/list
+    //    /do?action=get&object=list
+    //    /do?action=get&object=word&list=listname
+    //    /do?action=get&object=list&[not_]have_word=word
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setCharacterEncoding("UTF-8");
 
-        int id = (int) CookieManager.identifyRequest(request);
-        if (id == -1) {
+        int userId = (int) CookieManager.identifyRequest(request);
+        if (userId == -1) {
             writeResult(ERR_CODE_AUTH_FAILURE, response);
             return;
         }
@@ -161,36 +163,49 @@ public class DoServlet extends HttpServlet {
         String list_name = request.getParameter(PARAM_LIST_NAME);
 
         if ("list".equals(obj) && (list_name == null || list_name.length() == 0)) {
-            // get all lists
-            try {
-                DBAdapter.connect();
-                List<WordsList> lists = DBAdapter.getAllListsFromUser(id);
-
-                List<String> content = new ArrayList<>();
-
-                for (WordsList wl : lists) {
-                    content.add(wl.name);
-                }
-
-                JSONArray resultObj = new JSONArray(content.toArray()); // do I need to add OK-code here?
+            if (request.getParameter(PARAM_HAVE_WORD) == null && request.getParameter(PARAM_NOT_HAVE_WORD) == null) {
+                // get all lists
                 try {
+                    DBAdapter.connect();
+                    List<WordsList> lists = DBAdapter.getAllListsFromUser(userId);
+                    List<String> content = new ArrayList<>();
+                    for (WordsList wl : lists) {
+                        content.add(wl.name);
+                    }
+                    JSONArray resultObj = new JSONArray(content.toArray()); // do I need to add OK-code here?
                     PrintWriter out = response.getWriter();
                     out.print(resultObj.toString(4));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (SQLException e) {
+                    writeResult(ERR_INTERNAL, response);
+                    return;
+                } finally {
+                    DBAdapter.close();
                 }
-            } catch (SQLException e) {
-                writeResult(ERR_INTERNAL, response);
-                return;
-            } finally {
-                DBAdapter.close();
+            } else {
+                // get lists with or without a word
+                boolean listsHaveWord = true;
+                String word = request.getParameter(PARAM_HAVE_WORD);
+                if (word == null) {
+                    listsHaveWord = false;
+                    word = request.getParameter(PARAM_NOT_HAVE_WORD);
+                }
+                try {
+                    DBAdapter.connect();
+                    long wordId = DBAdapter.getWordID(word);
+                    List<WordsList> lists = DBAdapter.getListsForWord(userId, wordId, listsHaveWord);
+                    List<String> content = lists.stream().map(w -> w.name).collect(Collectors.toList());
+                    response.getWriter().print(new JSONArray(content.toArray()).toString(4));
+                } catch (SQLException e) {
+                    writeResult(ERR_INTERNAL, response);
+                } finally {
+                    DBAdapter.close();
+                }
             }
-            return;
         } else if ("word".equals(obj)) {
             try {
                 // get all lists in list list_name
                 DBAdapter.connect();
-                int list_id = DBAdapter.getListId(id, list_name);
+                int list_id = DBAdapter.getListId(userId, list_name);
                 if (list_id == -1) {
                     writeResult(ERR_INTERNAL, response);
                     return;
