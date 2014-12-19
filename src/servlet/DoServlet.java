@@ -114,7 +114,7 @@ public class DoServlet extends HttpServlet {
                     DBAdapter.addWordToList(list_id, word_id);
                 } else if (ACTION_DELETE.equals(action)) {
                     if ("*".equals(list_name)) {
-                        List<WordsList> lists = DBAdapter.getAllListsFromUser(id);
+                        List<WordsList> lists = DBAdapter.getListsByUserId(id);
                         for (WordsList wl : lists) {
                             DBAdapter.deleteWordFromList(word_id, wl.id);
                         }
@@ -167,7 +167,7 @@ public class DoServlet extends HttpServlet {
                 // get all lists
                 try {
                     DBAdapter.connect();
-                    List<WordsList> lists = DBAdapter.getAllListsFromUser(userId);
+                    List<WordsList> lists = DBAdapter.getListsByUserId(userId);
                     List<String> content = new ArrayList<>();
                     for (WordsList wl : lists) {
                         content.add(wl.name);
@@ -211,7 +211,7 @@ public class DoServlet extends HttpServlet {
                     return;
                 }
 
-                List<Word> words = DBAdapter.getAllWordsFromList(list_id);
+                List<Word> words = DBAdapter.getWordsFromList(list_id);
 
                 List<Object> answerList = new ArrayList<>();
 

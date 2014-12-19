@@ -2,12 +2,11 @@ package db; /**
  * Created by viacheslav on 13.12.14.
  */
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -51,48 +50,53 @@ public class DBAdapter {
     /**
      * creates tables
      *
-     * @throws ClassNotFoundException
      * @throws SQLException
      */
     public static void createTables() throws SQLException {
         statement.execute("PRAGMA foreign_keys = ON");
 
-        statement.execute("CREATE TABLE if not exists 'users' " +
-                "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'login' text unique, " +
-                "'password' text)");
+        statement.execute("CREATE TABLE IF NOT EXISTS users (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "login TEXT UNIQUE, " +
+                "password TEXT, "+
+                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP)");
 
-        statement.execute("CREATE TABLE if not exists 'cookies' " +
-                "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'user_id' INTEGER, " +
-                "'auth' text unique, " +
+        statement.execute("CREATE TABLE IF NOT EXISTS cookies (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "user_id INTEGER, " +
+                "auth TEXT UNIQUE, " +
+                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, "+
                 "FOREIGN KEY(user_id) REFERENCES users(id))");
 
-        statement.execute("CREATE TABLE if not exists 'lists' " +
-                "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'user_id' INTEGER, " +
-                "'name' text, " +
+        statement.execute("CREATE TABLE IF NOT EXISTS lists (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "user_id INTEGER, " +
+                "name TEXT, " +
+                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, "+
                 "FOREIGN KEY (user_id) REFERENCES users(id))");
 
-        statement.execute("CREATE TABLE if not exists 'words' " +
-                "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'word' text unique on conflict ignore, " +
-                "'translation' text, " +
-                "'article_json' text)");
+        statement.execute("CREATE TABLE IF NOT EXISTS words (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "word TEXT UNIQUE ON CONFLICT IGNORE, " +
+                "translation text, " +
+                "article_json text, "+
+                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP)");
 
-        statement.execute("CREATE TABLE if not exists 'words_in_lists' " +
-                "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'list_id' INTEGER, " +
-                "'word_id' INTEGER, " +
-                "FOREIGN KEY (list_id) REFERENCES lists(list_id), " +
-                "FOREIGN KEY (word_id) REFERENCES words(word_id));");
+        statement.execute("CREATE TABLE IF NOT EXISTS words_in_lists (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "list_id INTEGER, " +
+                "word_id INTEGER, " +
+                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, "+
+                "FOREIGN KEY (list_id) REFERENCES lists(id)," +
+                "FOREIGN KEY (word_id) REFERENCES words(id))");
 
-        statement.execute("CREATE TABLE if not exists 'tokens' " +
-                "('id' INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "'user_id' INTEGER, " +
-                "'token' text unique, " +
-                "'expires' INTEGER, " +
-                "FOREIGN KEY(user_id) REFERENCES users(id));");
+        statement.execute("CREATE TABLE IF NOT EXISTS tokens " +
+                "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "user_id INTEGER, " +
+                "token TEXT UNIQUE, " +
+                "expires INTEGER, " +
+                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, "+
+                "FOREIGN KEY(user_id) REFERENCES users(id))");
 
         System.out.println("tables already exist or were successfully created!");
     }
@@ -125,12 +129,12 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void drop() throws SQLException {
-        statement.execute("DROP TABLE if exists 'users';");
-        statement.execute("DROP TABLE if exists 'words';");
-        statement.execute("DROP TABLE if exists 'lists';");
-        statement.execute("DROP TABLE if exists 'words_in_lists';");
-        statement.execute("DROP TABLE if exists 'cookies';");
-        statement.execute("DROP TABLE if exists 'tokens';");
+        statement.execute("DROP TABLE if exists users;");
+        statement.execute("DROP TABLE if exists words;");
+        statement.execute("DROP TABLE if exists lists;");
+        statement.execute("DROP TABLE if exists words_in_lists;");
+        statement.execute("DROP TABLE if exists cookies;");
+        statement.execute("DROP TABLE if exists tokens;");
         createTables();
         System.out.println("Database cleared");
     }
@@ -139,7 +143,7 @@ public class DBAdapter {
 
     public static void setToken(int user_id, String value, long unix_time) throws SQLException
     {
-        String pst ="INSERT INTO 'tokens' ('user_id', 'token', 'expires') VALUES ( ?, ?, ?)";
+        String pst ="INSERT INTO tokens (user_id, token, expires) VALUES ( ?, ?, ?)";
         PreparedStatement s = connection.prepareStatement(pst);
         s.setInt(1, user_id);
         s.setString(2, value);
@@ -150,7 +154,7 @@ public class DBAdapter {
 
     public static void updateToken(int user_id, String value, long unix_time) throws SQLException
     {
-        String pst ="UPDATE 'tokens' SET 'token'=?, 'expires'=? WHERE  'user_id'=?";
+        String pst ="UPDATE tokens SET token=?, expires=? WHERE  user_id=?";
         PreparedStatement s = connection.prepareStatement(pst);
         s.setString(1, value);
         s.setLong(2, unix_time);
@@ -161,7 +165,7 @@ public class DBAdapter {
 
     public static String getToken(int user_id, long curTime) throws SQLException
     {
-        String pst ="SELECT  * FROM 'tokens' ('user_id', 'token', 'expires') WHERE 'user_id'=?";
+        String pst ="SELECT user_id, token, expires FROM tokens WHERE user_id=?";
         PreparedStatement s = connection.prepareStatement(pst);
         s.setInt(1, user_id);
         resultSet = s.getResultSet();
@@ -188,7 +192,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static long addUser(String login, String password) throws SQLException {
-        String sql = "INSERT INTO 'users' ('login', 'password') VALUES (? , ?)";
+        String sql = "INSERT INTO users (login, password) VALUES (? , ?)";
         PreparedStatement s = connection.prepareStatement(sql);
         s.setString(1, login);
         s.setString(2, password);
@@ -285,7 +289,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void addList(long user_id, String name) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("INSERT INTO 'lists' ('user_id', 'name') VALUES (?, ?)");
+        PreparedStatement s = connection.prepareStatement("INSERT INTO lists (user_id, name) VALUES (?, ?)");
         s.setLong(1, user_id);
         s.setString(2, name);
         s.executeUpdate();
@@ -342,10 +346,10 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void deleteList(int list_id) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("DELETE FROM 'lists' WHERE id=?");
+        PreparedStatement s = connection.prepareStatement("DELETE FROM lists WHERE id=?");
         s.setLong(1, list_id);
         s.executeUpdate();
-        s = connection.prepareStatement("DELETE FROM 'words_in_lists' WHERE list_id=?");
+        s = connection.prepareStatement("DELETE FROM words_in_lists WHERE list_id=?");
         s.setLong(1, list_id);
         s.executeUpdate();
     }
@@ -361,7 +365,7 @@ public class DBAdapter {
      */
     public static void addWord(int list_id, String word, String translation, String article_json) throws SQLException {
         PreparedStatement s = connection.prepareStatement(
-                "INSERT INTO 'words' ('word', 'translation', 'article_json') VALUES (? , ?, ?)");
+                "INSERT INTO words (word, translation, article_json) VALUES (? , ?, ?)");
         s.setString(1, word);
         s.setString(2, translation);
         s.setString(3, article_json);
@@ -369,7 +373,7 @@ public class DBAdapter {
         ResultSet generated = s.getGeneratedKeys();
         if (generated.next()) {
             long wordId = generated.getLong(1);
-            s = connection.prepareStatement("INSERT INTO 'words_in_lists' ('list_id', 'word_id') VALUES (?, ?)");
+            s = connection.prepareStatement("INSERT INTO words_in_lists (list_id, word_id) VALUES (?, ?)");
             s.setLong(1, list_id);
             s.setLong(2, wordId);
             s.executeUpdate();
@@ -385,7 +389,7 @@ public class DBAdapter {
      */
     public static void addWordToList(int list_id, int word_id) throws SQLException {
         PreparedStatement s = connection.prepareStatement(
-                "INSERT INTO 'words_in_lists' ('list_id', 'word_id') VALUES (?, ?)");
+                "INSERT INTO words_in_lists (list_id, word_id) VALUES (?, ?)");
         s.setLong(1, list_id);
         s.setLong(2, word_id);
         s.executeUpdate();
@@ -433,7 +437,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void deleteWord(int word_id) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("DELETE FROM 'words' WHERE id = ?");
+        PreparedStatement s = connection.prepareStatement("DELETE FROM words WHERE id = ?");
         s.setLong(1, word_id);
         s.executeUpdate();
     }
@@ -448,7 +452,7 @@ public class DBAdapter {
     public static void deleteWordFromList(int word_id, int list_id) throws SQLException
     {
         PreparedStatement s = connection.prepareStatement(
-                "DELETE FROM 'words_in_lists' WHERE list_id = ? AND word_id = ?");
+                "DELETE FROM words_in_lists WHERE list_id = ? AND word_id = ?");
         s.setLong(1, list_id);
         s.setLong(2, word_id);
         s.executeUpdate();
@@ -457,15 +461,15 @@ public class DBAdapter {
     /**
      * returns all the words in the specified list
      *
-     * @param list_id
+     * @param listId
      * @return
      * @throws SQLException
      */
-    public static List<Word> getAllWordsFromList(int list_id) throws SQLException {
+    public static List<Word> getWordsFromList(int listId) throws SQLException {
         PreparedStatement s = connection.prepareStatement(
                 "SELECT words.id, word, translation, article_json FROM words JOIN words_in_lists " +
-                "ON (words.id=words_in_lists.word_id) WHERE words_in_lists.list_id=?");
-        s.setLong(1, list_id);
+                "ON (words.id=words_in_lists.word_id) WHERE words_in_lists.list_id=? ORDER BY words_in_lists.time DESC");
+        s.setLong(1, listId);
         resultSet = s.executeQuery();
 
         List<Word> list = new ArrayList<>();
@@ -485,14 +489,14 @@ public class DBAdapter {
     /**
      * return all the Lists owned by user
      *
-     * @param user_id
+     * @param userId
      * @return
      * @throws SQLException
      */
-    public static List<WordsList> getAllListsFromUser(int user_id) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("SELECT * FROM lists " +
-                "WHERE user_id=?");
-        s.setLong(1, user_id);
+    public static List<WordsList> getListsByUserId(int userId) throws SQLException {
+        PreparedStatement s = connection.prepareStatement(
+                "SELECT * FROM lists WHERE user_id=? ORDER BY time");
+        s.setLong(1, userId);
         resultSet = s.executeQuery();
 
         List<WordsList> list = new ArrayList<>();
@@ -508,7 +512,8 @@ public class DBAdapter {
     }
 
     public static List<WordsList> getListsForWord(long userId, long wordId, boolean listsIncludeWord) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("SELECT list_id FROM words_in_lists WHERE word_id=?");
+        PreparedStatement s = connection.prepareStatement(
+                "SELECT list_id FROM words_in_lists WHERE word_id=?");
         s.setLong(1, wordId);
         resultSet = s.executeQuery();
         Set<Long> listsWordIsIn  = new HashSet<>();
@@ -517,7 +522,7 @@ public class DBAdapter {
             if (!listsWordIsIn.contains(id))
                 listsWordIsIn.add(id);
         }
-        s = connection.prepareStatement("SELECT * FROM lists WHERE user_id=?");
+        s = connection.prepareStatement("SELECT * FROM lists WHERE user_id=? ORDER BY time");
         s.setLong(1, userId);
         resultSet = s.executeQuery();
         List<WordsList> answer = new ArrayList<>();
@@ -537,7 +542,8 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void addCookie(long user_id, String value) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("INSERT INTO 'cookies' ('user_id', 'auth') VALUES (?, ?)");
+        PreparedStatement s = connection.prepareStatement(
+                "INSERT INTO cookies (user_id, auth) VALUES (?, ?)");
         s.setLong(1, user_id);
         s.setString(2, value);
         s.executeUpdate();
@@ -550,7 +556,7 @@ public class DBAdapter {
      * @throws SQLException
      */
     public static void deleteCookie(int user_id) throws SQLException {
-        PreparedStatement s = connection.prepareStatement("DELETE FROM 'cookies' WHERE user_id = ?");
+        PreparedStatement s = connection.prepareStatement("DELETE FROM cookies WHERE user_id = ?");
         s.setLong(1, user_id);
         s.executeUpdate();
     }

@@ -1,7 +1,5 @@
 package db;
 
-import java.util.List;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -37,7 +35,7 @@ public class Main {
 //            DBAdapter.addWord(wl.id, "word1", "transl", "json ololo{}");
 //            DBAdapter.addWord(wl.id, "word2", "transl", "json ololo{}");
 //
-//            List<Word> list = DBAdapter.getAllWordsFromList(wl.id);
+//            List<Word> list = DBAdapter.getWordsFromList(wl.id);
 //            for(Word w : list)
 //                System.out.println(w.toString());
 //
