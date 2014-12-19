@@ -92,11 +92,6 @@ API:
 	Пример ответа:
 		["lyrics", "food"]
 
-	/do?object=list&action=add&list=name - POST-запрос
-	Создать список с именем name
-	Пример ответа:
-		{"code":100}
-
 	/do?object=word&action=get&list=name
 	Получить все слова из списка юзера
 	Пример ответа:
@@ -109,7 +104,12 @@ API:
 Списки слов, POST-запросы:
 ---
 
-	/do?object=list&action=delete&list=name - POST-запрос
+    /do?object=list&action=add&list=name
+	Создать список с именем name
+	Пример ответа:
+		{"code":100}
+
+	/do?object=list&action=delete&list=name
 	Удалить список с именем name
 	Пример ответа:
     	{"code":100}
