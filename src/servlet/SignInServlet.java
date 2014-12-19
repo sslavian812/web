@@ -46,6 +46,22 @@ public class SignInServlet extends HttpServlet {
         if (username == null || username.length() == 0
                 || password == null || password.length() == 0) {
 
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null)
+                for (Cookie c : cookies) {
+                    if (CookieManager.COOKIE_AUTH.equals(c.getName())) {
+                        User u = CookieManager.validateCookie(c.getValue());
+                        if (u != null) {
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("code", CODE_HANDSHAKE);
+                            data.put("username", u.login);
+                            response.getWriter().print(new JSONObject(data));
+                            return;
+                        }
+                        break;
+                    }
+                }
+
             writeResult(ERR_CODE_BAD_REQUEST, response);
             return;
         }
