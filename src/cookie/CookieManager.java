@@ -53,14 +53,19 @@ public class CookieManager {
     }
 
     public static final String COOKIE_AUTH = "auth";
+    public static final String PARAM_TOKEN = "token";
 
     public static long identifyRequest(HttpServletRequest request) {
+        String token = request.getParameter(PARAM_TOKEN);
         User user = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null)
             for (Cookie cookie : cookies) {
-                if (Objects.equals(cookie.getName(), COOKIE_AUTH))
+                if (Objects.equals(cookie.getName(), COOKIE_AUTH)) {
                     user = CookieManager.validateCookie(cookie.getValue());
+                    if (!cookie.getValue().equals(token))
+                        user = null;
+                }
         }
         if (user == null)
             return -1;

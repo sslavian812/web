@@ -38,10 +38,10 @@ public class DoServlet extends HttpServlet {
     public static final String ACTION_GET = "get";
     public static final String ACTION_DELETE = "delete";
 
-    //    _list/add/list
-    //    _list/delete/list
-    //    _word/add/list/word
-    //    _word/delete/list(*)/word
+    //    /list/add/list
+    //    /list/delete/list
+    //    /word/add/list/word
+    //    /word/delete/list(*)/word
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setCharacterEncoding("UTF-8");
         response.addHeader("Access-Control-Allow-Origin", "*");
