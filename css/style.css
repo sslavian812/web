@@ -177,7 +177,10 @@ span {
 }
 #dict_list    {
 	overflow: scroll;
-	height: 457px;
+	height: 444px;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: #CCC;
 }
 #word_list   {
 	clear: right;
@@ -462,4 +465,11 @@ span {
 	opacity: .80;
 	z-index: 9999;
 	background-color: #78909C;
+}
+#dict #add_dict_alert {
+	margin: 0px;
+	padding-top: 0px;
+	padding-right: 5px;
+	padding-bottom: 2px;
+	padding-left: 15px;
 }

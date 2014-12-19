@@ -1,5 +1,5 @@
-var address = "http://192.192.0.106:80"
-var active_dict = "history";
+var address = "http://192.192.0.105:80"
+var $active_dict;
 var logon = false;
 
 $(document).ready(function(){		
@@ -100,8 +100,7 @@ $(document).ready(function(){
 					});
 				} else {
 					window.alert("Something went wrong.");	
-				}
-				
+				}			
 			});
 		}
 		return false;
@@ -110,7 +109,44 @@ $(document).ready(function(){
 	$('#sign_out').live('click', function () {
 		logout();	
 	});
+	
+	$('#new_dict').live('keyup', function () {
+		if (legal_characters($('#new_dict').val())) {
+			$('#add_dict_alert').css({'visibility' : 'hidden'});			
+		} else {
+			$('#add_dict_alert').text("Illegal characters.");	
+			$('#add_dict_alert').css({'visibility' : 'visible'});	
+		}
+	});
+	
+	$('#add_dict').live('click', function () {
+		var name = $('#new_dict').val();
+		if (name.length === 0) {
+			$('#add_dict_alert').text("Empty.");	
+			$('#add_dict_alert').css({'visibility' : 'visible'});		
+		} else if (legal_characters(name)) {
+			$('#add_dict_alert').css({'visibility' : 'hidden'});
+			var url = address + "/do?object=list&action=add&list=" + name;
+			$.getJSON(url, function () {
+				//TODO: computing code			
+			});
+			$('#new_dict').val("");
+			$('#dict_list').append($('<span class="dict_name center">'+name+'</span>'));			
+		} else {
+			$('#add_dict_alert').text("Illegal characters.");	
+			$('#add_dict_alert').css({'visibility' : 'visible'});		
+		}		
+	});
+	
+	$('.dict_name').live('click', function (event) {
+		$active_dict.removeClass("active");
+		$active_dict = $(event.target);
+		$active_dict.addClass("active");
+		draw_word_list($active_dict.text());		
+	});
+	
 	signin();
+	
 });
 
 var signin = function() {
@@ -127,32 +163,33 @@ var fill_all = function(username) {
 	url = address + "/do?object=list&action=get";
 	$.getJSON(url, function(response) {
 		draw_dict_list(response);
-		url = address + "/do?object=word&action=get&list=" + response[0];	
-		$.getJSON(url, function(word_list) {
-			draw_word_list(word_list);	
-		});
+		draw_word_list(response[0]);
 	});
 }
 
 var draw_dict_list = function (dict_list) {
 	var $dict_list = $('#dict_list');
+	$dict_list.html("")
 	for(var i = 0; i < dict_list.length; i++) {
 		var $dict = $('<span class="dict_name center">'+dict_list[i]+'</span>');
 		if (i === 0) {
-			active_dict = dict_list[i];
-			$dict.addClass("active");		
+			$active_dict = $dict;
+			$active_dict.addClass("active");		
 		}
 	    $dict_list.append($dict);                	                    	
 	}
 }
                		
-
-var draw_word_list = function (word_list) {
-	var $word_list = $('#word_list');
-	for(var i = 0; i < dict_list.length; i++) {
-		var $word = $('<span class="dict_element">'+word_list[i].word+'<font color="#99c1b9">'+word_list[i].translation+'</font></span>');
-	    $word_list.append($word);                	                    	
-	}
+var draw_word_list = function (dict_name) {
+	url = address + "/do?object=word&action=get&list=" + dict_name;	
+	$.getJSON(url, function(word_list) {		
+		var $word_list = $('#word_list');
+		$word_list.html("");
+		for(var i = 0; i < word_list.length; i++) {
+			var $word = $('<span class="dict_element">'+word_list[i].word+'<font color="#99c1b9"> - '+word_list[i].translation+'</font></span>');
+	    	$word_list.append($word);                	                    	
+		}
+	});
 }
 
 var auth = function(token) {
@@ -178,7 +215,6 @@ var clear_window = function() {
 	$('#pass_dont_match').css({'visibility' : 'hidden'});	
 }
 
-
 var login = function(username) {
 	logon = true;
 	$('#username').text(username);
@@ -194,9 +230,12 @@ var login = function(username) {
 var logout = function() {
 	logon = false;
 	document.cookie = "auth=;expires=Thu, 01 Jan 1970 00:00:01 GMT";
+	$('#add_dict_alert').css({'visibility' : 'hidden'});
 	$('#add_to_dict').css({'visibility' : 'hidden'});
+	$('#dict_list').html("");
 	$('#word_list').css({'visibility' : 'hidden'});
-	$('#dict').css({'visibility' : 'hidden'});
+	$('#word_list').html("");
+	$('#new_dict').val("");
 	$('#username').css({'display' : 'none'});	
 	$('#sign_out').css({'display' : 'none'});	
 	$('#sign_up').css({'display' : 'block'});
@@ -264,7 +303,7 @@ var translate = function() {
 				$original_text.append(response.def[0].text);
 				$original_text.append("<font color=\"#6f1014\"> ["+response.def[0].ts+"]</font>");				
 				$('#word_article').append($original);
-				if(logon && active_dict === "history") {
+				if(logon && $active_dict.text() === "history") {
 					var $word_list = $('#word_list');
 					var $word = $('<span class="dict_element">'+response.def[0].text+'<font color="#99c1b9"> - '+response.def[0].tr[0].text+'</font></span>');
 	    			$word_list.prepend($word);	
