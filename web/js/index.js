@@ -34,6 +34,13 @@ $(document).ready(function () {
         return false;
     });
 
+    $('#close_add_to_dict_window').live('click', function () {
+        $('#add_to_dict_fade ,  #add_to_dict_window').fadeOut(function () {
+            $('#add_to_dict_fade').remove();
+        });
+        return false;
+    });
+
     $('#su_password, #sur_password').live('keyup', function () {
         correct_passwords();
         return false;
@@ -200,7 +207,7 @@ var draw_dict_list = function (dict_list) {
     var $dict_list = $('#dict_list');
     $dict_list.html("");
     for (var i = 0; i < dict_list.length; i++) {
-        var $dict = $('<span class="dict_name center">' + dict_list[i] + '</span>');
+        var $dict = $('<span class="dict_name">' + dict_list[i] + '</span>');
         if (i === 0) {
             $active_dict = $dict;
             $active_dict.addClass("active");
@@ -297,7 +304,7 @@ var draw_dict_list_in_window = function (list) {
     $dict_list = $('#dict_list_in_window');
     $dict_list.html("");
     for (var i = 0; i < list.length; i++) {
-        var $dict = $('<span class="dict_name_in_window center">' + list[i] + '</span>');
+        var $dict = $('<span class="dict_name_in_window">' + list[i] + '</span>');
         $dict_list.append($dict);
     }
 };

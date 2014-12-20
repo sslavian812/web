@@ -84,6 +84,20 @@ body {
     transition-delay: 0s;
 }
 
+.header {
+    background-color: #78909C;
+    overflow: auto;
+}
+
+.header p {
+    font-size: x-large;
+    margin: 0px;
+    padding: 10px;
+    color: #f7fdfd;
+    float: left;
+    font-weight: lighter;
+}
+
 span {
     word-wrap: break-word;
     display: block;
@@ -160,7 +174,10 @@ span {
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-bottom-color: #CCC;
-    padding: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 20px;
 }
 
 .dict_name_in_window {
@@ -168,7 +185,15 @@ span {
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-bottom-color: #CCC;
-    padding: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 15px;
+}
+
+#add_to_dict_window .header p {
+    font-size: medium;
+    margin: 7px;
 }
 
 #dict #add_dict img {
@@ -247,7 +272,7 @@ span.active {
 
 #word_article {
     overflow: scroll;
-    height: 528px;
+    height: 524px;
     border-top-width: 1px;
     border-top-style: solid;
     border-top-color: #CCC;
@@ -315,7 +340,6 @@ span.active {
     top: 50%;
     left: 50%;
     color: #000;
-    height: 500;
     z-index: 99999;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
@@ -323,7 +347,7 @@ span.active {
 }
 
 #add_to_dict_window #dict_list_in_window {
-    height: 360px;
+    height: 303px;
     overflow: scroll;
 }
 
@@ -344,7 +368,6 @@ span.active {
     top: 50%;
     left: 50%;
     color: #000;
-    height: 500;
     z-index: 99999;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
@@ -364,64 +387,24 @@ span.active {
     background-color: #78909c;
     float: right;
     color: #f7fdfd;
-    margin-top: 0px;
-    margin-right: 30px;
-    margin-bottom: 0px;
-    margin-left: 30px;
-}
-
-#sign_up_window .header p {
-    font-size: x-large;
-    margin: 0px;
-    padding: 10px;
-    color: #f7fdfd;
-    float: left;
-    font-weight: lighter;
+    margin: 0px 30px;
 }
 
 #sign_up_window #su_login {
-    margin-top: 30px;
-    margin-right: 30px;
-    margin-bottom: 0px;
-    margin-left: 30px;
+    margin: 30px 30px 0px;
 }
 
 #sign_up_window #su_password {
-    margin-right: 30px;
-    margin-left: 30px;
-    margin-bottom: 0px;
-    margin-top: 5px;
+    margin: 5px 30px 0px;
 }
 
 #sign_up_window #sur_password {
-    margin-top: 30px;
-    margin-right: 30px;
-    margin-bottom: 0px;
-    margin-left: 30px;
-}
-
-#sign_up_window .header {
-    background-color: #78909C;
-    overflow: auto;
+    margin: 30px 30px 0px;
 }
 
 #sign_in_window .input_section {
     padding: 0px;
     margin: 30px;
-}
-
-#sign_in_window .header p {
-    font-size: x-large;
-    margin: 0px;
-    padding: 10px;
-    color: #f7fdfd;
-    float: left;
-    font-weight: lighter;
-}
-
-#sign_in_window .header {
-    background-color: #78909C;
-    overflow: auto;
 }
 
 #sign_in_window {
@@ -434,7 +417,6 @@ span.active {
     top: 50%;
     left: 50%;
     color: #000;
-    height: 500;
     z-index: 99999;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
