@@ -22,6 +22,8 @@ public class DBAdapter {
     public static Statement statement;
     public static ResultSet resultSet;
 
+    volatile static int connectionsCount = 0;
+
     /**
      * connects to DB
      */
@@ -38,6 +40,7 @@ public class DBAdapter {
                 statement = connection.createStatement();
                 createTables();
                 System.out.println("data base connected successfully!");
+                connectionsCount++;
                 return true;
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -105,20 +108,23 @@ public class DBAdapter {
      * closes the database
      */
     public static boolean close() {
-        try {
-            if (resultSet != null)
-                resultSet.close();
-            if (statement != null)
-                statement.close();
-            if (connection != null)
-                connection.close();
-            System.out.println("Database closed");
-            connection = null;
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        connectionsCount--;
+        if (connectionsCount == 0)
+            try {
+                if (resultSet != null)
+                    resultSet.close();
+                if (statement != null)
+                    statement.close();
+                if (connection != null)
+                    connection.close();
+                System.out.println("Database closed");
+                connection = null;
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        return true;
     }
 
     /**
