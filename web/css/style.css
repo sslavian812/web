@@ -149,6 +149,15 @@ span {
 	border-bottom-color: #CCC;
 	padding: 5px;
 }
+
+.dict_name_in_window    {
+	background-color: #FFF;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCC;
+	padding: 5px;
+}
+
 #dict #add_dict img   {
 	padding: 4px;
 }
@@ -217,7 +226,7 @@ span {
 }
 #word_article   {
 	overflow: scroll;
-	height: 530px;
+	height: 528px;
 	border-top-width: 1px;
 	border-top-style: solid;
 	border-top-color: #CCC;
@@ -281,8 +290,9 @@ span {
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 }
-#add_to_dict_window .dict_list {
+#add_to_dict_window #dict_list_in_window {
 	height: 360px;
+	overflow: scroll;
 }
 .alert {
 	color: #900;
