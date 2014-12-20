@@ -1,106 +1,117 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Slate</title>
-	<link href="css/style.css" rel="stylesheet" type="text/css" />
-	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-	<link rel="import" href="http://www.polymer-project.org/components/paper-ripple/paper-ripple.html">
-	<link rel="import" href="http://www.polymer-project.org/components/core-icons/core-icons.html">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Slate</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link rel="import" href="http://www.polymer-project.org/components/paper-ripple/paper-ripple.html">
+    <link rel="import" href="http://www.polymer-project.org/components/core-icons/core-icons.html">
 </head>
 
 <body>
-	<div class="main">
-		<div class="header">
-    		<p>Slate</p>          
-            <div class="button" id="sign_up">  	   	
-      			<div class="center" fit>SIGN UP</div>
-      			<paper-ripple fit></paper-ripple>
-   		  	</div>
-   		  	<div class="button" id="sign_in">  	   	
-      			<div class="center" fit>SIGN IN</div>
-      			<paper-ripple fit></paper-ripple>
-    		</div>
- 			<div class="button" id="sign_out">  	   	
-      			<div class="center" fit>SIGN OUT</div>
-      			<paper-ripple fit></paper-ripple>
-    		</div>
-            <p id="username"><p>
-		</div>
-        <div class="body">
-			<div id="main_section">
-        		<input id="original_word" type="text" placeholder="Word"/> 
-              	<div class="button" id="translate">
-                	<img alt="Translate" src="img/translate.png"> 
+<div class="main">
+    <div class="header">
+        <p>Slate</p>
+
+        <div class="button" id="sign_up">
+            <div class="center" fit>SIGN UP</div>
+            <paper-ripple fit></paper-ripple>
+        </div>
+        <div class="button" id="sign_in">
+            <div class="center" fit>SIGN IN</div>
+            <paper-ripple fit></paper-ripple>
+        </div>
+        <div class="button" id="sign_out">
+            <div class="center" fit>SIGN OUT</div>
+            <paper-ripple fit></paper-ripple>
+        </div>
+        <p id="username">
+
+        <p>
+    </div>
+    <div class="body">
+        <div id="main_section">
+            <input id="original_word" type="text" placeholder="Word"/>
+
+            <div class="button" id="translate">
+                <img alt="Translate" src="img/translate.png">
+                <paper-ripple fit></paper-ripple>
+            </div>
+            <div id="dict">
+                <input id="new_dict" type="text" placeholder="New dictionary"/>
+
+                <div class="button" id="add_dict">
+                    <img alt="Add dictionary" src="img/add_dict.png">
                     <paper-ripple fit></paper-ripple>
                 </div>
-             	 <div id="dict">
-					<input id="new_dict" type="text" placeholder="New dictionary"/>
-			    	<div class="button" id="add_dict">
-                    	<img alt="Add dictionary" src="img/add_dict.png">
-                    	<paper-ripple fit></paper-ripple>
-                	</div>           
-           	    	<span class="alert" id="add_dict_alert">А</span>                
-           	    	<div id="dict_list"></div>
-			  	</div>
-			  	<div id="word_list"></div>
-			</div>
-			<div id="word_section">
-              <div class="button" id="add_to_dict">  	   	
-      				<div class="center" fit>ADD</div>
-      				<paper-ripple fit></paper-ripple>
-    			</div>
-				<div id="word_article">
-	
-				</div>
-			</div>
-      </div>
-        	<div class="footer"></div>
-		</div>
-    <div id="add_to_dict_window">
- 		<div id="dict_list_in_window">
+                <span class="alert" id="add_dict_alert">А</span>
 
-		</div>
-	</div>
-	<div id="sign_in_window">
-		<div class="header">
-       		<p>Sign in</p> 
-			<div class="icon-button" id="close_sign_in">
-				<core-icon icon="close"></core-icon>
-				<paper-ripple class="circle recenteringTouch" fit></paper-ripple>
-			</div>
-		</div>  
-		<div class="input_section">
-        	<input id="si_login" type="text" placeholder="Username"/>            	
+                <div id="dict_list"></div>
+            </div>
+            <div id="word_list"></div>
         </div>
-		<div class="input_section">
-        	<input id="si_password" type="password" placeholder="Password"/>
-		</div>
-      <span class="alert" id="incorrect">Incorrect username or password.</span>
-		<div class="button" id="sub_sign_in">  	   	
-			<div class="center" fit>SIGN IN</div>
-   			<paper-ripple fit></paper-ripple>
-   		</div>
-	</div>
-    <div id="sign_up_window">
-		<div class="header">
-       		<p>Sign up</p> 
-			<div class="icon-button" id="close_sign_up">
-				<core-icon icon="close"></core-icon>
-				<paper-ripple class="circle recenteringTouch" fit></paper-ripple>
-			</div>
-		</div>  
-	  <input id="su_login" type="text" placeholder="Username"/>            	
-   	  <span class="alert" id="username_alert">A</span>
-      <input id="su_password" type="password" placeholder="Password"/>
-		<input id="sur_password" type="password" placeholder="Repeat password"/>
-		<span class="alert" id="pass_dont_match">A</span>
-  	  <div class="button" id="sub_sign_up">  	   	
-   			<div class="center" fit>SIGN UP</div>
-   			<paper-ripple fit></paper-ripple>
-   		</div>
-	</div>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+        <div id="word_section">
+            <div class="button" id="add_to_dict">
+                <div class="center" fit>ADD</div>
+                <paper-ripple fit></paper-ripple>
+            </div>
+            <div id="word_article">
+
+            </div>
+        </div>
+    </div>
+    <div class="footer"></div>
+</div>
+<div id="add_to_dict_window">
+    <div id="dict_list_in_window">
+
+    </div>
+</div>
+<div id="sign_in_window">
+    <div class="header">
+        <p>Sign in</p>
+
+        <div class="icon-button" id="close_sign_in">
+            <core-icon icon="close"></core-icon>
+            <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
+        </div>
+    </div>
+    <div class="input_section">
+        <input id="si_login" type="text" placeholder="Username"/>
+    </div>
+    <div class="input_section">
+        <input id="si_password" type="password" placeholder="Password"/>
+    </div>
+    <span class="alert" id="incorrect">Incorrect username or password.</span>
+
+    <div class="button" id="sub_sign_in">
+        <div class="center" fit>SIGN IN</div>
+        <paper-ripple fit></paper-ripple>
+    </div>
+</div>
+<div id="sign_up_window">
+    <div class="header">
+        <p>Sign up</p>
+
+        <div class="icon-button" id="close_sign_up">
+            <core-icon icon="close"></core-icon>
+            <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
+        </div>
+    </div>
+    <input id="su_login" type="text" placeholder="Username"/>
+    <span class="alert" id="username_alert">A</span>
+    <input id="su_password" type="password" placeholder="Password"/>
+    <input id="sur_password" type="password" placeholder="Repeat password"/>
+    <span class="alert" id="pass_dont_match">A</span>
+
+    <div class="button" id="sub_sign_up">
+        <div class="center" fit>SIGN UP</div>
+        <paper-ripple fit></paper-ripple>
+    </div>
+</div>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
 <script src="js/index.js"></script>
 </body>
 </html>
