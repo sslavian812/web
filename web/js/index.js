@@ -191,6 +191,7 @@ var draw_dict_list = function (dict_list) {
 var draw_word_list = function (dict_name) {
     url = address + "/do?object=word&action=get&list=" + dict_name + "&token=" + getToken();
     $.getJSON(url, function (word_list) {
+        console.log(word_list)
         var $word_list = $('#word_list');
         $word_list.html("");
         for (var i = 0; i < word_list.length; i++) {

@@ -176,8 +176,8 @@ public class DoServlet extends HttpServlet {
                     PrintWriter out = response.getWriter();
                     out.print(resultObj.toString(4));
                 } catch (SQLException e) {
+                    e.printStackTrace();
                     writeResult(ERR_INTERNAL, response);
-                    return;
                 } finally {
                     DBAdapter.close();
                 }
@@ -196,6 +196,7 @@ public class DoServlet extends HttpServlet {
                     List<String> content = lists.stream().map(w -> w.name).collect(Collectors.toList());
                     response.getWriter().print(new JSONArray(content.toArray()).toString(4));
                 } catch (SQLException e) {
+                    e.printStackTrace();
                     writeResult(ERR_INTERNAL, response);
                 } finally {
                     DBAdapter.close();
@@ -232,6 +233,7 @@ public class DoServlet extends HttpServlet {
                     DBAdapter.close();
                 }
             } catch (SQLException e) {
+                e.printStackTrace();
                 writeResult(ERR_INTERNAL, response);
             }
         } else {
