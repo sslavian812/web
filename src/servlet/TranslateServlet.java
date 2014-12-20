@@ -2,16 +2,13 @@ package servlet;
 
 import cookie.CookieManager;
 import db.DBAdapter;
-import db.User;
 import db.Word;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import translate.Translator;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +17,6 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by Sergey on 14.12.2014.
@@ -61,11 +57,11 @@ public class TranslateServlet extends HttpServlet {
                 word = Translator.translate(text);
             }
 
-            int id = (int) CookieManager.identifyRequest(request);
-            if (id != -1) {
+            int userId = (int) CookieManager.identifyRequest(request);
+            if (userId != -1) {
                 DBAdapter.connect();
-                int list_id = DBAdapter.getListId(id, "history");
-                DBAdapter.addWord(list_id, word.word, word.translation, word.article_json);
+                int list_id = DBAdapter.getListId(userId, "history");
+                DBAdapter.addWord(list_id, word.word, word.translation, word.article_json, userId);
             }
 
             Map<String, Object> map = new HashMap<>();

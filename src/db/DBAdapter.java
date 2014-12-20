@@ -61,35 +61,35 @@ public class DBAdapter {
         statement.execute("CREATE TABLE IF NOT EXISTS users (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "login TEXT UNIQUE, " +
-                "password TEXT, "+
+                "password TEXT, " +
                 "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP)");
 
         statement.execute("CREATE TABLE IF NOT EXISTS cookies (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "user_id INTEGER, " +
                 "auth TEXT UNIQUE, " +
-                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, "+
+                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
                 "FOREIGN KEY(user_id) REFERENCES users(id))");
 
         statement.execute("CREATE TABLE IF NOT EXISTS lists (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "user_id INTEGER, " +
                 "name TEXT, " +
-                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, "+
+                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
                 "FOREIGN KEY (user_id) REFERENCES users(id))");
 
         statement.execute("CREATE TABLE IF NOT EXISTS words (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "word TEXT UNIQUE ON CONFLICT IGNORE, " +
-                "translation text, " +
-                "article_json text, "+
+                "translation TEXT, " +
+                "article_json TEXT, " +
                 "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP)");
 
         statement.execute("CREATE TABLE IF NOT EXISTS words_in_lists (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "list_id INTEGER, " +
                 "word_id INTEGER, " +
-                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, "+
+                "time INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
                 "FOREIGN KEY (list_id) REFERENCES lists(id)," +
                 "FOREIGN KEY (word_id) REFERENCES words(id))");
 
@@ -126,12 +126,12 @@ public class DBAdapter {
      */
     public synchronized static void drop() throws SQLException {
         Statement statement = connection.createStatement();
-        statement.execute("DROP TABLE if exists users;");
-        statement.execute("DROP TABLE if exists words;");
-        statement.execute("DROP TABLE if exists lists;");
-        statement.execute("DROP TABLE if exists words_in_lists;");
-        statement.execute("DROP TABLE if exists cookies;");
-        statement.execute("DROP TABLE if exists tokens;");
+        statement.execute("DROP TABLE IF EXISTS users;");
+        statement.execute("DROP TABLE IF EXISTS words;");
+        statement.execute("DROP TABLE IF EXISTS lists;");
+        statement.execute("DROP TABLE IF EXISTS words_in_lists;");
+        statement.execute("DROP TABLE IF EXISTS cookies;");
+        statement.execute("DROP TABLE IF EXISTS tokens;");
         statement.close();
         createTables();
         System.out.println("Database cleared");
@@ -310,27 +310,34 @@ public class DBAdapter {
      *
      * @throws SQLException
      */
-    public synchronized static void addWord(int list_id, String word, String translation, String article_json) throws SQLException {
-        PreparedStatement s = connection.prepareStatement(
-                "INSERT INTO words (word, translation, article_json) VALUES (? , ?, ?)");
-        if (article_json == null || translation == null)
-            return;
-        s.setString(1, word);
-        s.setString(2, translation);
-        s.setString(3, article_json);
-        s.executeUpdate();
-        ResultSet generated = s.getGeneratedKeys();
-        if (generated.next()) {
-            s.close();
-            long wordId = generated.getLong(1);
-            if (wordId == 0) return;
-            s = connection.prepareStatement("INSERT INTO words_in_lists (list_id, word_id) VALUES (?, ?)");
-            s.setLong(1, list_id);
-            s.setLong(2, wordId);
+    public synchronized static void addWord(int listId, String word, String translation, String article_json, long userId) throws SQLException {
+        Word w = getWord(word);
+        long wId = -1;
+        if (w != null) {
+            wId = w.id;
+        } else {
+            PreparedStatement s = connection.prepareStatement(
+                    "INSERT INTO words (word, translation, article_json) VALUES (? , ?, ?)");
+            if (article_json == null || translation == null)
+                return;
+            s.setString(1, word);
+            s.setString(2, translation);
+            s.setString(3, article_json);
             s.executeUpdate();
+            ResultSet generated = s.getGeneratedKeys();
+            if (generated.next()) wId = generated.getLong(1);
+            s.close();
         }
-        s.close();
+        List<WordsList> availableLists = getListsForWord(userId, wId, false);
+        if (availableLists.stream().anyMatch(l -> l.id == listId)) {
+            PreparedStatement s = connection.prepareStatement("INSERT INTO words_in_lists (list_id, word_id) VALUES (?, ?)");
+            s.setLong(1, listId);
+            s.setLong(2, wId);
+            s.executeUpdate();
+            s.close();
+        }
     }
+
 
     /**
      * inserts a word to words and associated it with specified list
@@ -395,8 +402,7 @@ public class DBAdapter {
      *
      * @throws SQLException
      */
-    public synchronized static void deleteWordFromList(int word_id, int list_id) throws SQLException
-    {
+    public synchronized static void deleteWordFromList(int word_id, int list_id) throws SQLException {
         PreparedStatement s = connection.prepareStatement(
                 "DELETE FROM words_in_lists WHERE list_id = ? AND word_id = ?");
         s.setLong(1, list_id);
@@ -413,7 +419,7 @@ public class DBAdapter {
     public synchronized static List<Word> getWordsFromList(int listId) throws SQLException {
         PreparedStatement s = connection.prepareStatement(
                 "SELECT words.id, word, translation, article_json FROM words JOIN words_in_lists " +
-                "ON (words.id=words_in_lists.word_id) WHERE words_in_lists.list_id=? ORDER BY words_in_lists.time DESC");
+                        "ON (words.id=words_in_lists.word_id) WHERE words_in_lists.list_id=? ORDER BY words_in_lists.time DESC");
         s.setLong(1, listId);
         resultSet = s.executeQuery();
 
@@ -461,7 +467,7 @@ public class DBAdapter {
                 "SELECT list_id FROM words_in_lists WHERE word_id=?");
         s.setLong(1, wordId);
         resultSet = s.executeQuery();
-        Set<Long> listsWordIsIn  = new HashSet<>();
+        Set<Long> listsWordIsIn = new HashSet<>();
         while (resultSet.next()) {
             long id = resultSet.getLong("list_id");
             if (!listsWordIsIn.contains(id))
@@ -475,7 +481,7 @@ public class DBAdapter {
         while (resultSet.next()) {
             long id = resultSet.getLong("id");
             if (!(listsWordIsIn.contains(id) ^ listsIncludeWord))
-                answer.add(new WordsList((int)id, (int)resultSet.getLong("user_id"), resultSet.getString("name")));
+                answer.add(new WordsList((int) id, (int) resultSet.getLong("user_id"), resultSet.getString("name")));
         }
         s.close();
         return answer;
