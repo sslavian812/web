@@ -9,7 +9,9 @@ $(document).ready(function () {
     $('#translate').click(translate);
     $('#original_word').live("keypress", function (event) {
         if (event.keyCode === 13) {
-            translate();
+            var $original_word = $('#original_word');
+            translate($original_word.val());
+            $original_word.val("");
         }
     });
     my_window('sign_in', 360, 360);
@@ -153,9 +155,7 @@ $(document).ready(function () {
         var $dict = $(event.target);
         $dict.addClass("active");
         var url = address + "/do?object=word&action=add&list=" + $dict.text() + "&word=" + cur_word + "&token=" + getToken();
-        console.log(url);
         $.post(url, null, function (data, textStatus) {
-            console.log(data);
             if (data !== null && data.code && data.code === 100) {
                 $('#add_to_dict_fade ,  #add_to_dict_window').fadeOut(function () {
                     clear_window();
@@ -164,7 +164,11 @@ $(document).ready(function () {
                 add_to_dict_checker();
             }
         }, "json");
+    });
 
+    $('.dict_element').live('click', function (event) {
+        var $word = $(event.target);
+        translate($word.data("word"));
     });
 
     signin();
@@ -208,7 +212,7 @@ var draw_word_list = function (dict_name) {
         var $word_list = $('#word_list');
         $word_list.html("");
         for (var i = 0; i < word_list.length; i++) {
-            var $word = $('<span class="dict_element">' + word_list[i].word + '<font color="#99c1b9"> - ' + word_list[i].translation + '</font></span>');
+            var $word = $('<span class="dict_element" data-word="' + word_list[i].word + '">' + word_list[i].word + '<font color="#99c1b9"  data-word="' + word_list[i].word + '"> - ' + word_list[i].translation + '</font></span>');
             $word_list.append($word);
         }
     });
@@ -277,7 +281,6 @@ var logout = function () {
 var add_to_dict_checker = function () {
     var url = address + "/do?object=list&action=get&not_have_word=" + cur_word + "&token=" + getToken();
     $.getJSON(url, function (list) {
-        console.log(list);
         if (list.length > 0) {
             draw_dict_list_in_window(list);
             $('#add_to_dict').css({'visibility': 'visible'});
@@ -345,11 +348,9 @@ var legal_characters = function (string) {
     return true;
 };
 
-var translate = function () {
-    $original_word = $('#original_word');
-    var url = address + "/translate?word=" + $original_word.val() + "&token=" + getToken();
+var translate = function (word) {
+    var url = address + "/translate?word=" + word + "&token=" + getToken();
     $('#add_to_dict').css({'visibility': 'hidden'});
-    $original_word.val("");
     $word_article = $('#word_article');
     $.getJSON(url, function (response) {
         response = response.article_json;
@@ -359,7 +360,8 @@ var translate = function () {
         $original.append($original_text);
         if (response.def.length > 0) {
             $original_text.append(response.def[0].text);
-            $original_text.append("<font color=\"#6f1014\"> [" + response.def[0].ts + "]</font>");
+            if (response.def[0].ts)
+                $original_text.append("<font color=\"#6f1014\"> [" + response.def[0].ts + "]</font>");
             $word_article.append($original);
 
             for (var i = 0; i < response.def.length; i++) {
