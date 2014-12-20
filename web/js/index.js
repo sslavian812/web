@@ -154,6 +154,7 @@ $(document).ready(function () {
     $('.dict_name_in_window').live('click', function (event) {
         var $dict = $(event.target);
         $dict.addClass("active");
+        var dictName = $dict.text();
         var url = address + "/do?object=word&action=add&list=" + $dict.text() + "&word=" + cur_word + "&token=" + getToken();
         $.post(url, null, function (data, textStatus) {
             if (data !== null && data.code && data.code === 100) {
@@ -161,6 +162,8 @@ $(document).ready(function () {
                     clear_window();
                     $('#add_to_dict_fade').remove();
                 });
+                if ($active_dict.text() === dictName)
+                    draw_word_list(dictName);
                 add_to_dict_checker();
             }
         }, "json");
