@@ -19,6 +19,32 @@ body {
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 
+.sub_header {
+    background-color: #B0BEC5;
+    overflow: auto;
+}
+
+.sub_header p {
+    font-size: x-large;
+    margin: 0;
+    padding: 10px;
+    color: #B0BEC5;
+    float: left;
+    font-weight: lighter;
+}
+
+.main .horizontal_half_left {
+    overflow: hidden;
+    float: left;
+    width: 53%;
+}
+
+.main .horizontal_half_right {
+    overflow: hidden;
+    float: left;
+    width: 47%;
+}
+
 .main .header p {
     margin: 0px;
     color: #f7fdfd;
@@ -222,7 +248,7 @@ span.active {
     width: 32px;
     margin-top: 11px;
     margin-right: 4px;
-    margin-bottom: 4px;
+    margin-bottom: 11px;
     margin-left: 4px;
 }
 
@@ -261,7 +287,7 @@ span.active {
 
 #word_section {
     width: 450px;
-    border: 1px solid #CCC;
+    border: none;
     height: 591px;
     float: right;
     margin-top: 9px;
@@ -271,11 +297,8 @@ span.active {
 }
 
 #word_article {
-    overflow: scroll;
     height: 524px;
-    border-top-width: 1px;
-    border-top-style: solid;
-    border-top-color: #CCC;
+    overflow-x: hidden;
 }
 
 #word_article .word .pos {

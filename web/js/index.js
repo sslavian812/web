@@ -3,17 +3,73 @@ var $active_dict = null;
 var logon = false;
 var cur_word = null;
 
+function if_enter_key(then) {
+    if (event.keyCode === 13) {
+        then()
+    }
+}
+
+function start_login() {
+    if (legal_characters($('#si_login').val()) && legal_characters($('#si_password').val())) {
+        var url = address + "/signin?username=" + $('#si_login').val() + "&password=" + $('#si_password').val();
+        $.getJSON(url, function (response) {
+            if (response.code === 301) {
+                $('#incorrect').text("Incorrect username or password.");
+                $('#incorrect').css({'visibility': 'visible'});
+            } else if (response.code === 100) {
+                auth(response.token);
+                fill_all($('#si_login').val());
+                $('#sign_in_fade ,  #sign_in_window').fadeOut(function () {
+                    clear_window();
+                    $('#sign_in_fade').remove();
+                });
+            } else {
+                window.alert("Something went wrong.");
+            }
+        });
+    }
+    return false;
+}
+
+function start_signup() {
+    if (correct_username($('#su_login').val()) && correct_passwords()) {
+        var url = address + "/signup?username=" + $('#su_login').val() + "&password=" + $('#su_password').val();
+        $.getJSON(url, function (response) {
+            if (response.code === 301) {
+                $('#username_alert').text("Username already exists.");
+                $('#username_alert').css({'visibility': 'visible'});
+            } else if (response.code === 100) {
+                auth(response.token);
+                fill_all($('#su_login').val());
+                $('#sign_up_fade ,  #sign_up_window').fadeOut(function () {
+                    clear_window();
+                    $('#sign_up_fade').remove();
+                });
+            } else {
+                window.alert("Something went wrong.");
+            }
+
+        });
+    }
+    return false;
+}
+
 $(document).ready(function () {
     "use strict";
 
     $('#translate').click(translate);
     $('#original_word').live("keypress", function (event) {
-        if (event.keyCode === 13) {
+        if_enter_key(function () {
             var $original_word = $('#original_word');
             translate($original_word.val());
             $original_word.val("");
-        }
+        });
     });
+
+    $('#si_password, #si_login').live("keypress", function (event) {
+        if_enter_key(start_login)
+    });
+
     my_window('sign_in', 360, 360);
     my_window('sign_up', 360, 380);
     my_window('add_to_dict', 250, 360);
@@ -46,6 +102,10 @@ $(document).ready(function () {
         return false;
     });
 
+    $('#su_password, #sur_password, #su_login').live('keypress', function (event) {
+        if_enter_key(start_signup)
+    });
+
     $('#su_login').live('keyup', function () {
         correct_username($('#su_login').val());
         return false;
@@ -71,50 +131,9 @@ $(document).ready(function () {
         return false;
     });
 
-    $('#sub_sign_up').live('click', function () {
-        if (correct_username($('#su_login').val()) && correct_passwords()) {
-            var url = address + "/signup?username=" + $('#su_login').val() + "&password=" + $('#su_password').val();
-            $.getJSON(url, function (response) {
-                if (response.code === 301) {
-                    $('#username_alert').text("Username already exists.");
-                    $('#username_alert').css({'visibility': 'visible'});
-                } else if (response.code === 100) {
-                    auth(response.token);
-                    fill_all($('#su_login').val());
-                    $('#sign_up_fade ,  #sign_up_window').fadeOut(function () {
-                        clear_window();
-                        $('#sign_up_fade').remove();
-                    });
-                } else {
-                    window.alert("Something went wrong.");
-                }
+    $('#sub_sign_up').live('click', start_signup);
 
-            });
-        }
-        return false;
-    });
-
-    $('#sub_sign_in').live('click', function () {
-        if (legal_characters($('#si_login').val()) && legal_characters($('#si_password').val())) {
-            var url = address + "/signin?username=" + $('#si_login').val() + "&password=" + $('#si_password').val();
-            $.getJSON(url, function (response) {
-                if (response.code === 301) {
-                    $('#username_alert').text("Incorrect username or password.");
-                    $('#username_alert').css({'visibility': 'visible'});
-                } else if (response.code === 100) {
-                    auth(response.token);
-                    fill_all($('#si_login').val());
-                    $('#sign_in_fade ,  #sign_in_window').fadeOut(function () {
-                        clear_window();
-                        $('#sign_in_fade').remove();
-                    });
-                } else {
-                    window.alert("Something went wrong.");
-                }
-            });
-        }
-        return false;
-    });
+    $('#sub_sign_in').live('click', start_login);
 
     $('#sign_out').live('click', function () {
         logout();
@@ -129,7 +148,11 @@ $(document).ready(function () {
         }
     });
 
-    $('#add_dict').live('click', function () {
+    $('#new_dict').live('keypress', function(event) {
+        if_enter_key(start_add_dict)
+    })
+
+    function start_add_dict() {
         var name = $('#new_dict').val();
         if (name.length === 0) {
             $('#add_dict_alert').text("Empty.");
@@ -142,14 +165,16 @@ $(document).ready(function () {
                     if (cur_word !== null)
                         add_to_dict_checker();
                     $('#new_dict').val("");
-                    $('#dict_list').append($('<span class="dict_name center">' + name + '</span>'));
+                    $('#dict_list').append($('<span class="dict_name">' + name + '</span>'));
                 }
             }, "json");
         } else {
             $('#add_dict_alert').text("Illegal characters.");
             $('#add_dict_alert').css({'visibility': 'visible'});
         }
-    });
+    }
+
+    $('#add_dict').live('click', start_add_dict);
 
     $('.dict_name').live('click', function (event) {
         $active_dict.removeClass("active");
@@ -183,7 +208,8 @@ $(document).ready(function () {
 
     signin();
 
-});
+})
+;
 
 var signin = function () {
     var url = address + "/signin";
@@ -347,15 +373,15 @@ var correct_passwords = function () {
 };
 
 var legal_characters = function (string) {
-    for (var i = 0; i < string.length; i++) {
+    /*for (var i = 0; i < string.length; i++) {
         var code = string.charCodeAt(i);
         if (((code >= 65) && (code <= 90)) || ((code >= 97) && (code <= 122)) || ((code >= 48) && (code <= 57))) {
             continue;
         } else {
             return false;
         }
-    }
-    return true;
+    }*/
+    return string.indexOf("<") == -1 && string.indexOf(">") == -1;
 };
 
 var translate = function (word) {
@@ -435,6 +461,15 @@ var translate = function (word) {
 var my_window = function (id, width, height) {
     $('#' + id).click(function () {
         var cur_window = '#' + id + '_window';
+        $(cur_window).keyup(function (e) {
+            if (e.keyCode == 27) { $('#' + id + '_fade').click(); }     // enter
+        });
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            if (evt.keyCode == 27) {
+                $('#' + id + '_fade').click();
+            }
+        };
         $(cur_window).fadeIn().css({'width': width, 'height': height});
         var popMargTop = ($(cur_window).height() + 80) / 2;
         var popMargLeft = ($(cur_window).width() + 80) / 2;

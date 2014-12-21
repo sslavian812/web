@@ -29,32 +29,36 @@
 
         <p>
     </div>
-    <div class="body">
-        <div id="main_section">
-            <input id="original_word" type="text" placeholder="Word"/>
-
+    <div class="sub_header">
+        <div class="horizontal_half_left">
+            <input id="original_word" type="text" placeholder="What to translate?"/>
             <div class="button" id="translate">
                 <img alt="Translate" src="img/translate.png">
                 <paper-ripple fit></paper-ripple>
             </div>
+        </div>
+        <div class="horizontal_half_right_"><div class="button" id="add_to_dict">
+                <div class="center" fit>ADD</div>
+                <paper-ripple fit></paper-ripple>
+            </div>
+        </div>
+    </div>
+    <div class="body">
+        <div id="main_section">
             <div id="dict">
-                <input id="new_dict" type="text" placeholder="New dictionary"/>
+                <input id="new_dict" type="text" placeholder="Add a words list"/>
 
                 <div class="button" id="add_dict">
                     <img alt="Add dictionary" src="img/add_dict.png">
                     <paper-ripple fit></paper-ripple>
                 </div>
-                <span class="alert" id="add_dict_alert">А</span>
+                <!--<span class="alert" id="add_dict_alert">А</span>!-->
 
                 <div id="dict_list"></div>
             </div>
             <div id="word_list"></div>
         </div>
         <div id="word_section">
-            <div class="button" id="add_to_dict">
-                <div class="center" fit>ADD</div>
-                <paper-ripple fit></paper-ripple>
-            </div>
             <div id="word_article">
 
             </div>
