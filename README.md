@@ -1,4 +1,4 @@
-web
+Slate
 ===
 
 Сервер работает на Java и servlet'ах
@@ -9,10 +9,27 @@ web
 Для работы БД требуется [SQLite JDBC](https://bitbucket.org/xerial/sqlite-jdbc,)
 Для корректной установки см. последний абзац.
 
-API:
+Инструкция
+===
+1. Установить [Tomcat 8](http://tomcat.apache.org/):
+Windows: на официальном сайте есть инсталлер;
+Ubuntu / CentOS: [инструкция](http://tecadmin.net/install-tomcat-8-on-centos-rhel-and-ubuntu/).
+__ВАЖНО__ Удостовериться, что Tomcat имеет доступ на запись к папке, куда он сам установлен, и всему её содержимому.
+
+2. Загрузить [SQLite JDBC Driver](https://bitbucket.org/xerial/sqlite-jdbc/downloads), поместить .jar в
+_{путь к Tomcat}/lib_.
+Туда же распаковать из загруженного .jar: _org/sqlite/native/{Your platform}/{Your architecture}/sqlitejdbc..._
+
+3. Создать _{путь к Tomcat}/bin/db/ss.s3db_ -- пустой файл.
+
+4. Открыть проект в IntelliJ IDEA Ultimate.
+5. Создать конфигурацию запуска Tomcat Server, указать ей Application Server и 
+на вкладке Deployment добавить Artifact.
+
+API
 ===
 
-Регистрация и вход:
+Регистрация и вход
 ---
 
     /signup?username=u&password=p
@@ -27,16 +44,15 @@ API:
     	{"code":100, "username":"name", "token":"jccjunskexoqipxfcmytvzbvkezfpoux"}
 
 
-	/signin?username=u&password=password (or with no args to handshake)
-	Авторизовать пользователя
+    /signin?username=u&password=password (или без аргументов, чтобы по cookie получить имя пользователя)
+    Авторизовать пользователя
 	code:
-	    100 -- OK, see token
-		101 -- "handshake" -- cookie is valid, you are %username%
-	    300 -- bad request
-	    301 -- access denied
-	    302 -- internal error
-    token: cookie value to save as "auth"
-    username: the user's name
+	    100 -- OK, токен выдан
+	    101 -- "рукопожитие" -- cookie валидна, выдано имя пользователя (без токена)
+	    300 -- некорректный запрос
+	    301 -- отказано в доступе
+	    302 -- внутренняя ошибка
+    token: Этот токен должен быть сохранен в cookies как "auth" и должен прикладываться параметром во все запросы к API.    	    username: Имя пользователя, совершившего вход.
     Пример ответа:
     	{"code":100,"username":"name","token":"yhnsxgigyvysmnpycpofkypmnvxiqehm"}
 
@@ -47,11 +63,11 @@ API:
     Ответ при неудачной авторизации
     	{"code":300}
 
-Перевод:
+Перевод
 ---
 
-	/translate?word=word
-	Перевести слово word. если юзер залогинен - слово добавится в его список history.
+	/translate?word=word&token=hereYourTokenPlease
+	Перевести слово word. Если юзер залогинен, слово добавится в его список history.
 	Пример отвера:
 		{
 			"word": "recombination",
@@ -73,8 +89,12 @@ API:
 				}]
 			}
 		}
+		
+	Коды ошибок:
+	300 - некорректный запрос
+	302 - внутренняя ошибка
 
-Списки слов, GET-запросы:
+Списки слов, GET-запросы
 ---
 
 	/do?object=list&action=get
@@ -100,8 +120,13 @@ API:
 			{"translation":"второй","word":"second"},
 			{"translation":"третий","word":"third"}
 		]
+		
+    Коды ошибок:
+	300 - некорректный запрос
+	301 - отказано в доступе
+	302 - внутренняя ошибка
 
-Списки слов, POST-запросы:
+Списки слов, POST-запросы
 ---
 
     /do?object=list&action=add&list=name
@@ -128,3 +153,8 @@ API:
 	удалить слово word из всех списков юзера
 	Пример ответа:
         {"code":100}
+        
+    Коды ошибок:
+	300 - некорректный запрос
+	301 - отказано в доступе
+	302 - внутренняя ошибка
