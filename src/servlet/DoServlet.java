@@ -172,7 +172,10 @@ public class DoServlet extends HttpServlet {
                     for (WordsList wl : lists) {
                         content.add(wl.name);
                     }
+
                     JSONArray resultObj = new JSONArray(content.toArray()); // do I need to add OK-code here?
+
+                    response.setContentType("application/json;charset=UTF-8");
                     PrintWriter out = response.getWriter();
                     out.print(resultObj.toString(4));
                 } catch (SQLException e) {
@@ -194,6 +197,7 @@ public class DoServlet extends HttpServlet {
                     long wordId = DBAdapter.getWordID(word);
                     List<WordsList> lists = DBAdapter.getListsForWord(userId, wordId, listsHaveWord);
                     List<String> content = lists.stream().map(w -> w.name).collect(Collectors.toList());
+                    response.setContentType("application/json;charset=UTF-8");
                     response.getWriter().print(new JSONArray(content.toArray()).toString(4));
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -225,6 +229,7 @@ public class DoServlet extends HttpServlet {
 
                 JSONArray resultObj = new JSONArray(answerList.toArray());    // do I need to add OK-code here?
                 try {
+                    response.setContentType("application/json;charset=UTF-8");
                     PrintWriter out = response.getWriter();
                     out.print(resultObj.toString());
                 } catch (IOException e) {
@@ -251,6 +256,7 @@ public class DoServlet extends HttpServlet {
         content.put("code", errorCode);
         JSONObject errorObj = new JSONObject(content);
         try {
+            response.setContentType("application/json;charset=UTF-8");
             PrintWriter out = response.getWriter();
             out.print(errorObj.toString());
         } catch (IOException e) {
