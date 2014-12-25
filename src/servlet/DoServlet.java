@@ -44,7 +44,7 @@ public class DoServlet extends HttpServlet {
     //    /word/delete/list(*)/word
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setCharacterEncoding("UTF-8");
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Access-Control-Allow-Origin", "*"); // Debug-only feature
 
         int id = (int) CookieManager.identifyRequest(request);
         if (id == -1) {
@@ -139,7 +139,8 @@ public class DoServlet extends HttpServlet {
     //    /do?action=get&object=word&list=listname
     //    /do?action=get&object=list&[not_]have_word=word
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setCharacterEncoding("UTF-8");
+        //response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
 
         int userId = (int) CookieManager.identifyRequest(request);
         if (userId == -1) {
@@ -174,8 +175,6 @@ public class DoServlet extends HttpServlet {
                     }
 
                     JSONArray resultObj = new JSONArray(content.toArray()); // do I need to add OK-code here?
-
-                    response.setContentType("application/json;charset=UTF-8");
                     PrintWriter out = response.getWriter();
                     out.print(resultObj.toString(4));
                 } catch (SQLException e) {
@@ -197,7 +196,6 @@ public class DoServlet extends HttpServlet {
                     long wordId = DBAdapter.getWordID(word);
                     List<WordsList> lists = DBAdapter.getListsForWord(userId, wordId, listsHaveWord);
                     List<String> content = lists.stream().map(w -> w.name).collect(Collectors.toList());
-                    response.setContentType("application/json;charset=UTF-8");
                     response.getWriter().print(new JSONArray(content.toArray()).toString(4));
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -229,7 +227,6 @@ public class DoServlet extends HttpServlet {
 
                 JSONArray resultObj = new JSONArray(answerList.toArray());    // do I need to add OK-code here?
                 try {
-                    response.setContentType("application/json;charset=UTF-8");
                     PrintWriter out = response.getWriter();
                     out.print(resultObj.toString());
                 } catch (IOException e) {
